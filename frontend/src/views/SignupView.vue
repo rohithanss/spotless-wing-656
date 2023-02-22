@@ -6,6 +6,7 @@ import { email, required, minLength } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 
 import { useToast } from "primevue/usetoast";
+import { computed } from "@vue/reactivity";
 
 let submitted = ref(false);
 const isLoading = ref(false);
@@ -13,7 +14,9 @@ const password = ref("");
 const email1 = ref("");
 const name = ref("");
 const mobile = ref(null);
-const role = ref("user");
+const role = computed(() => {
+  return trainer.value == true ? "trainer" : "user";
+});
 const trainer = ref(false);
 
 const rules = {
@@ -26,8 +29,9 @@ const rules = {
 const toast = useToast();
 const v$ = useVuelidate(rules, { password, email1, name, mobile });
 
-async function login(isValid) {
+async function signup(isValid) {
   submitted.value = true;
+
   if (isValid) {
     toast.add({
       severity: "info",
@@ -35,6 +39,19 @@ async function login(isValid) {
       detail: "Message Content",
       life: 3000,
     });
+    try {
+      let res = await axios.post("http://localhost:8000/auth/signup", {
+        name: name.value,
+        email: email1.value,
+        phone: mobile.value,
+        password: password.value,
+        role: role.value,
+      });
+
+      console.log(await res.data);
+    } catch (err) {
+      console.log(err);
+    }
   } else {
     toast.add({
       severity: "error",
@@ -48,7 +65,7 @@ async function login(isValid) {
 <template>
   <div id="container">
     <h1>Join Broh Fitness</h1>
-    <form class="login-form" @submit.prevent="login(!v$.$invalid)">
+    <form class="login-form" @submit.prevent="signup(!v$.$invalid)">
       <InputText
         name=""
         id=""

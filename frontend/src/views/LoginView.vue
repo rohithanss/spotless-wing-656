@@ -18,6 +18,40 @@ const rules = {
 
 const toast = useToast();
 const v$ = useVuelidate(rules, { password, email1 });
+
+async function login(isValid) {
+  submitted.value = true;
+  if (isValid) {
+    try {
+      let res = await axios.post("http://localhost:8000/auth/login", {
+        email: email1.value,
+        password: password.value,
+      });
+
+      console.log(await res.data);
+      toast.add({
+        severity: "success",
+        summary: "Info Message",
+        detail: "Message Content",
+        life: 3000,
+      });
+    } catch (err) {
+      toast.add({
+        severity: "error",
+        summary: "Info Message",
+        detail: "Message Content",
+        life: 3000,
+      });
+    }
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Info Message",
+      detail: "Message Content",
+      life: 3000,
+    });
+  }
+}
 </script>
 <template>
   <div id="container">
