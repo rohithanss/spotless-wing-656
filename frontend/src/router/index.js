@@ -10,16 +10,34 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/about",
-      name: "about",
-
-      component: () => import("../views/AboutView.vue"),
-    },
-    {
       path: "/login",
       name: "login",
 
       component: () => import("../views/LoginView.vue"),
+    },
+    {
+      path: "/signup",
+      name: "signup",
+
+      component: () => import("../views/SignupView.vue"),
+    },
+    {
+      path: "/trainings",
+      name: "training",
+
+      component: () => import("../views/Trainings.vue"),
+    },
+    {
+      path: "/accessories",
+      name: "accessories",
+
+      component: () => import("../views/Accessories.vue"),
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "notFound",
+
+      component: () => import("../views/NotFoundView.vue"),
     },
   ],
 });
