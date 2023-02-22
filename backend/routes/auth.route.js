@@ -3,7 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const users = require("../models/user.model");
+const users = require('../models/user.model');
+const authenticate = require('../middlewares/authenticate');
 
 const authRouter = express.Router();
 
@@ -64,5 +65,26 @@ authRouter.post("/login", async (req, res) => {
     res.status(404).send({ msg: "User not found, Please signup" });
   }
 });
+
+authRouter.use('/profile',authenticate);
+authRouter.get('/profile' , async (req,res) => {
+    const {userID} = req.body;
+    console.log(userID);
+
+    const user = await users.findOne({ where: { id:userID } });
+
+    if(user){
+        res.status(200).send({
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            role: user.role
+        })
+        console.log('User Profile fetched');
+    } else{
+        res.status(400).send({'err' : 'Error getting Profile'})
+    }
+
+})
 
 module.exports = authRouter;
