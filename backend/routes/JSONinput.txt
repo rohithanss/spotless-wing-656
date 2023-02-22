@@ -1,0 +1,47 @@
+Mix Bookings
+{
+    "trainer_id": 1,
+    "activity_type": "legs",
+    "fees": 999,
+    "reg_date": "20230222",
+    "six": 0,
+    "seven": 1,
+    "eight": 1,
+    "nine": 1,
+    "ten": 1,
+    "eleven": 1,
+    "twelve": 0,
+    "one": 0,
+    "two": 0,
+    "three": 0,
+    "four": 1,
+    "five": 1,
+    "six_eve": 1,
+    "seven_eve": 1,
+    "eight_eve": 1
+}
+
+all slots booked
+{
+    "trainer_id": 1,
+    "activity_type": "legs",
+    "fees": 999,
+    "reg_date": "20230222",
+    "six": 0,
+    "seven": 0,
+    "eight": 0,
+    "nine": 0,
+    "ten": 0,
+    "eleven": 0,
+    "twelve": 0,
+    "one": 0,
+    "two": 0,
+    "three": 0,
+    "four": 0,
+    "five": 0,
+    "six_eve": 0,
+    "seven_eve": 0,
+    "eight_eve": 0
+}
+
+select * from bookings where (six or seven or eight or nine or ten or eleven or twelve or one or two or three or four or five or six_eve or seven_eve or eight_eve) and Date(reg_date) = '2023-02-23';
