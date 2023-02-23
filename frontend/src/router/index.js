@@ -23,15 +23,33 @@ const router = createRouter({
     },
     {
       path: "/trainings",
-      name: "training",
+      name: "trainings",
 
       component: () => import("../views/Trainings.vue"),
     },
     {
-      path: "/accessories",
-      name: "accessories",
+      path: "/mybookings",
+      name: "mybookings",
 
-      component: () => import("../views/Accessories.vue"),
+      component: () => import("../views/MyBookings.vue"),
+    },
+    {
+      path: "/createslots",
+      name: "createslots",
+
+      component: () => import("../views/CreateSlots.vue"),
+    },
+    {
+      path: "/mybookings",
+      name: "mybookings",
+
+      component: () => import("../views/MyBookings.vue"),
+    },
+    {
+      path: "/slotstatus",
+      name: "slotstatus",
+
+      component: () => import("../views/SlotsStatus.vue"),
     },
     {
       path: "/:pathMatch(.*)*",

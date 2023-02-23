@@ -29,23 +29,20 @@
     <div :style="{ width: '50%' }">
       <table>
         <tr>
-          <th>Trainer:</th>
-          <td>{{ name }}</td>
+          <th>Date:</th>
+          <td>{{ reg_date }}</td>
         </tr>
         <tr>
-          <th>Type:</th>
+          <th>Training Type:</th>
           <td>{{ activity_type }}</td>
         </tr>
-        <tr>
-          <th>Email:</th>
-          <td>{{ email }}</td>
-        </tr>
+
         <tr>
           <th>Fee(per session):</th>
           <td>Rs. {{ fee }}</td>
         </tr>
         <tr>
-          <th>Time Slot:</th>
+          <th>Time Slots:</th>
           <td>
             <Dropdown
               v-model="selectedSlot"
@@ -60,23 +57,25 @@
     <div
       :style="{
         flexGrow: '1',
-        height: '100%',
         display: 'flex',
-        justifyContent: 'right',
+        flexDirection: 'column',
+        gap: '20px',
+        alignItems: 'end',
         alignSelf: 'end',
       }"
     >
       <Button
-        class="p-button-success"
-        :style="{
-          fontSize: '1.2rem',
-          fontWeight: '600',
-          width: '80%',
-          justifyContent: 'center',
-        }"
+        label="Close All Slots"
+        class="p-button-danger"
+        :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
+      />
+      <Button
+        class="p-button-warning"
+        :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
+        :disabled="slot == null || isLoading"
       >
-        Book Now
-      </Button>
+        Reserve Selected Slot</Button
+      >
     </div>
   </div>
 </template>
@@ -84,7 +83,9 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const props = defineProps(["name", "activity_type", "fee", "email", "slots"]);
+const props = defineProps(["id", "reg_date", "activity_type", "fee", "slots"]);
+
+const isLoading = ref(false);
 
 const selectedSlot = ref({ value: null, time: "Select Slot" });
 

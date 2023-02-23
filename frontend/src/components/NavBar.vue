@@ -5,31 +5,57 @@
         <img class="logo" src="BrohFitness.png" alt=""
       /></RouterLink>
     </div>
-    <div class="navLinks">
+    <div class="navLinks" v-if="profile.status == false">
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/trainings">Live Trainings</RouterLink>
-      <RouterLink to="/accessories">Courses</RouterLink>
+      <RouterLink to="/courses">Courses</RouterLink>
       <RouterLink to="/login">Login</RouterLink>
       <RouterLink to="/signup">Create Account</RouterLink>
     </div>
-    <!-- <div class="navLinks">
+    <div
+      class="navLinks"
+      v-if="profile.status == true && profile.role == 'trainer'"
+    >
       <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/trainings">Create Slots</RouterLink>
-      <RouterLink to="/accessories">Slots Status</RouterLink>
-      <RouterLink to="/login">Logout</RouterLink>
-    </div> -->
-    <!-- <div class="navLinks">
+      <RouterLink to="/createslots">Create Slots</RouterLink>
+      <RouterLink to="/slotstatus">Slots Status</RouterLink>
+      <RouterLink
+        to="/profile"
+        :style="{ color: 'var(--text-color-secondary)', fontWeight: '700' }"
+        >Profile({{ profile.name }})</RouterLink
+      >
+
+      <RouterLink to="#" :onclick="logout">Logout</RouterLink>
+    </div>
+    <div
+      class="navLinks"
+      v-if="profile.status == true && profile.role == 'user'"
+    >
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/trainings">Live Trainings</RouterLink>
-      <RouterLink to="/accessories">Courses</RouterLink>
-      <RouterLink to="/trainings">My Bookings</RouterLink>
-      <RouterLink to="/login">Logout</RouterLink>
-    </div> -->
+      <RouterLink to="/courses">Courses</RouterLink>
+      <RouterLink to="/mybookings">My Bookings</RouterLink>
+      <RouterLink
+        to="/profile"
+        :style="{ color: 'var(--text-color-secondary)', fontWeight: '700' }"
+      >
+        Profile({{ profile.name }})</RouterLink
+      >
+
+      <RouterLink to="#" :onclick="logout">Logout</RouterLink>
+    </div>
   </nav>
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+
+const props = defineProps(["profile"]);
+const emits = defineEmits(["logout"]);
+function logout() {
+  // console.log("logging out");
+  emits("logout");
+}
 </script>
 
 <style scoped>
