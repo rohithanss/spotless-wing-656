@@ -19,26 +19,52 @@ trainerRouter.post('/addslot', async (req,res) => {
     })
 })
 
-trainerRouter.get('/avilableslots', async (req,res) => {
+trainerRouter.get('/availableslots', async (req,res) => {
     const trainer_id = req.body.userID;
     const date = new Date();
-    const curr_date = date.toISOString().split('T')[0]
+    const curr_date = date.toISOString().split('T')[0];
+    const q = req.query;
+    const queDate = q?.selected_date;
+    console.log(queDate);
 
-    await bookings.findAll({ where: {
-        trainer_id,
-        [Op.or]: [{ six: 1 }, { seven: 1 }, { eight: 1 }, { nine: 1 }, { ten: 1 }, { eleven: 1 }, { twelve: 1 }, { one: 1 }, { two: 1 }, { three: 1 }, { four: 1 }, { five: 1 }, { six_eve: 1 }, { seven_eve: 1 }, { eight_eve: 1 }],
-        reg_date: {
-            [Op.gte]: curr_date,
-        }
-    } })
-    .then((slots) => {
-        // console.log('slots :',slots);
-        res.status(200).send({status: 'success', data : slots})
-    })
-    .catch((err) => {
-        res.send(err)
-    })
+    if(queDate === ""){
+        // console.log('empty str cond');
+        await bookings.findAll({
+            where: {
+                trainer_id,
+                [Op.or]: [{ six: 1 }, { seven: 1 }, { eight: 1 }, { nine: 1 }, { ten: 1 }, { eleven: 1 }, { twelve: 1 }, { one: 1 }, { two: 1 }, { three: 1 }, { four: 1 }, { five: 1 }, { six_eve: 1 }, { seven_eve: 1 }, { eight_eve: 1 }],
+                reg_date: {
+                    [Op.gte]: curr_date,
+                }
+            }
+        })
+            .then((slots) => {
+                // console.log('slots :',slots);
+                res.status(200).send({ status: 'success', data: slots })
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(400).send({status : 'error', msg : 'error finding all slots'})
+            })
+    } else{
+        await bookings.findAll({
+            where: {
+                trainer_id,
+                reg_date: queDate,
+                [Op.or]: [{ six: 1 }, { seven: 1 }, { eight: 1 }, { nine: 1 }, { ten: 1 }, { eleven: 1 }, { twelve: 1 }, { one: 1 }, { two: 1 }, { three: 1 }, { four: 1 }, { five: 1 }, { six_eve: 1 }, { seven_eve: 1 }, { eight_eve: 1 }]
+            }
+        })
+            .then((slots) => {
+                // console.log('slots :',slots);
+                res.status(200).send({ status: 'success', data: slots })
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(400).send({ status: 'error', msg: 'error finding selected date"s slots'})
+            })
+    }
 
+    
 })
 
 trainerRouter.patch('/updateslot', async (req,res) => {
@@ -77,5 +103,22 @@ trainerRouter.patch('/updateslot', async (req,res) => {
     })
 
 });
+
+trainerRouter.delete('/closeslot', async (req,res) => {
+    const {id} = req.body;
+
+    await bookings.destroy({
+        where : {
+            id : 1
+        }
+    })
+    .then(() => {
+        res.status(200).send({status : 'success', msg : 'Slots deleted successfully'})
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(400).send({status : 'error', msg : 'error deleting slots'})
+    })
+})
 
 module.exports = trainerRouter
