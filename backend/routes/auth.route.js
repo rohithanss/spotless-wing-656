@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const users = require('../models/user.model');
-const authenticate = require('../middlewares/authenticate');
+const authRole = require('../middlewares/authRole');
+// const authenticate = require('../middlewares/authenticate');
 
 const authRouter = express.Router();
 
@@ -21,7 +22,7 @@ authRouter.post("/signup", async (req, res) => {
   bcrypt.hash(password, 4, async (err, hash) => {
     if (err) {
       console.log(err);
-      res.status(400).send({status : 'error', err: "Something went wrong, try again later" });
+      res.status(400).send({status : 'error', msg: "Something went wrong, try again later" });
     } else {
       await users
         .create({ name, role, phone, email, password: hash })
@@ -31,9 +32,9 @@ authRouter.post("/signup", async (req, res) => {
         .catch((err) => {
           console.error("Failed to signup :", err);
           if(err.errors != undefined){
-            res.status(400).send({ status : 'fail' ,err: err.errors[0].message});
+            res.status(400).send({ status : 'fail' ,msg: err.errors[0].message});
           } else{
-            res.status(400).send({ status : 'error' ,err : 'something went wrong, please signup again'})
+            res.status(400).send({ status : 'error' ,msg : 'something went wrong, please signup again'})
           }
         });
     }
@@ -49,7 +50,7 @@ authRouter.post("/login", async (req, res) => {
     bcrypt.compare(password, user.password, (err, result) => {
       if (err) {
         console.log(err);
-        res.status(400).send({status : 'error', err: "Something went wrong " });
+        res.status(400).send({status : 'error', msg: "Something went wrong " });
       }
 
       if (result == true) {
@@ -60,7 +61,7 @@ authRouter.post("/login", async (req, res) => {
             if (err) {
               res
                 .status(400)
-                .send({status : 'error', err: "Something went wrong, Please login again" });
+                .send({status : 'error', msg: "Something went wrong, Please login again" });
             } else {
               res.status(202).send({status : 'success', msg: "Login Successful", token: token });
             }
@@ -76,7 +77,7 @@ authRouter.post("/login", async (req, res) => {
 });
 
 // authRouter.use('/profile',authenticate);
-authRouter.get('/profile', authenticate , async (req,res) => {
+authRouter.get('/profile', authRole(['user','admin','trainer']) , async (req,res) => {
     const {userID} = req.body;
     console.log(userID);
 
@@ -89,9 +90,9 @@ authRouter.get('/profile', authenticate , async (req,res) => {
         phone: user.phone,
         role: user.role
       }})
-        console.log('User Profile fetched');
+        // console.log('User Profile fetched');
     } else{
-        res.status(400).send({status : 'error', err : 'Error getting Profile'})
+        res.status(400).send({status : 'error', msg : 'Error getting Profile'})
     }
 
 })

@@ -44,4 +44,4 @@ all slots booked
     "eight_eve": 0
 }
 
-select * from bookings where (six or seven or eight or nine or ten or eleven or twelve or one or two or three or four or five or six_eve or seven_eve or eight_eve) and Date(reg_date) = '2023-02-23';
+select * from bookings where (six or seven or eight or nine or ten or eleven or twelve or one or two or three or four or five or six_eve or seven_eve or eight_eve) and Date(reg_date) >= '2022-02-22';
