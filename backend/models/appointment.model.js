@@ -8,6 +8,10 @@ const appointments = sequelize.define('appointments',{
         autoIncrement : true,
         primaryKey : true
     },
+    customer_id : {
+        type : DataTypes.INTEGER,
+        allowNull : false
+    },
     trainer_id : {
         type : DataTypes.INTEGER,
         allowNull : false
@@ -18,7 +22,7 @@ const appointments = sequelize.define('appointments',{
     },
     slot : {
         type : DataTypes.STRING,
-
+        allowNull : false
     },
     type : {
         type : DataTypes.STRING,
@@ -44,3 +48,5 @@ sequelize.sync()
     .catch((err) => {
         console.error('Unable to create Appointments table :', err);
     })
+
+module.exports = appointments
