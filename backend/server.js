@@ -3,6 +3,7 @@ const cors = require('cors');
 
 const authRouter = require('./routes/auth.route');
 const trainerRouter = require('./routes/trainer.route');
+const authRole = require('./middlewares/authRole');
 
 const app = express();
 app.use(express.json());
@@ -15,7 +16,7 @@ app.get('/', (req,res) => {
 })
 
 app.use('/auth', authRouter);
-app.use('/trainer', trainerRouter);
+app.use('/trainer', authRole(['trainer', 'admin']),trainerRouter);
 
 app.listen(8000, () => {
     console.log('Server started at PORT 8000');
