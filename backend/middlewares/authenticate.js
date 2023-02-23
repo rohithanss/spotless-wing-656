@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const authenticate = (req, res, next) => {
-    const token = req.headers.token;
-    // console.log(token);
+    const token = req.headers.token?.split(' ')[1];
+    console.log(token.split(' ')[1]);
 
     jwt.verify(token, process.env.PRIVATEKEY, (err, decoded) => {
         if (err) {
