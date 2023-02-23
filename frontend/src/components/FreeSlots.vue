@@ -1,50 +1,48 @@
 <template>
-  <div class="main">
-    <h1 :style="{ color: 'var(--text-color)' }">
-      Choose the time and dates fits you
-    </h1>
+  <div
+    :style="{
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '20px',
+      alignItems: 'center',
+    }"
+  >
+    <h1>Free Slots</h1>
     <div class="filterSection">
       <div>
         <p>Select Date:</p>
         <Calendar v-model="searchDate" :showTime="false" />
       </div>
+
       <div>
-        <p>Sort By Fees:</p>
-        <Dropdown
-          v-model="sort"
-          :options="sortOptions"
-          optionLabel="name"
-          placeholder="Sort By Fee"
-        />
-      </div>
-      <div>
-        <p>Filter By Trainer Type:</p>
+        <p>Filter By Training Type:</p>
         <MultiSelect
           :style="{ width: '150px' }"
           v-model="selectedTrainerTypes"
           :options="trainerTypes"
           optionLabel="type"
-          placeholder="Select Trainer Type"
+          placeholder="Select Type"
         />
       </div>
     </div>
     <div
+      class="free-slots"
       :style="{
         width: '100%',
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
-        gap: '30px',
-        margin: '20px 0',
+        flexDirection: 'column',
+        gap: '20px',
       }"
     >
-      <TrainingInfo
-        v-for="{ name, email, activity_type, slots, fee } in data"
-        :name="name"
-        :email="email"
+      <FreeSlotInfo
+        v-for="{ id, activity_type, fee, slots, reg_date } in data"
+        :id="id"
         :activity_type="activity_type"
         :fee="fee"
         :slots="slots"
+        :reg_date="reg_date"
       />
     </div>
   </div>
@@ -52,8 +50,8 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import FreeSlotInfo from "./FreeSlotInfo.vue";
 
-import TrainingInfo from "../components/TrainingInfo.vue";
 const trainerTypes = ref([
   { type: "Gym", value: "Gym" },
   { type: "Yoga", value: "Yoga" },
@@ -78,16 +76,10 @@ const date = computed(() => {
   );
 });
 
-const sort = ref();
-const sortOptions = [
-  { name: "High to Low", value: "desc" },
-  { name: "Low to High", value: "asc" },
-];
-
 const data = ref([
   {
-    name: "Rohit",
-    email: "rhans@icloud.com",
+    id: "1",
+    reg_date: "2023-02-23",
     activity_type: "Yoga",
     fee: 1000,
     six: true,
@@ -95,8 +87,8 @@ const data = ref([
     six_eve: true,
   },
   {
-    name: "Rohit",
-    email: "rhans@icloud.com",
+    id: "1",
+    reg_date: "2023-02-23",
     activity_type: "Fat Loss",
     fee: 1000,
     six: true,
@@ -104,8 +96,8 @@ const data = ref([
     six_eve: true,
   },
   {
-    name: "Brijesh",
-    email: "brijesh@icloud.com",
+    id: "1",
+    reg_date: "2023-02-23",
     activity_type: "Gym",
     fee: 1500,
 
@@ -115,8 +107,8 @@ const data = ref([
     five: true,
   },
   {
-    name: "Brijesh",
-    email: "brijesh@icloud.com",
+    id: "1",
+    reg_date: "2023-02-23",
     activity_type: "Diet",
     fee: 500,
 
@@ -126,8 +118,8 @@ const data = ref([
     seven_eve: true,
   },
   {
-    name: "Brijesh",
-    email: "brijesh@icloud.com",
+    id: "1",
+    reg_date: "2023-02-23",
     activity_type: "Weight Gain",
     fee: 500,
 
@@ -178,16 +170,6 @@ data.value.forEach((el, i) => {
 </script>
 
 <style scoped>
-.main {
-  min-height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
-}
-
 .filterSection {
   width: 70%;
   display: flex;

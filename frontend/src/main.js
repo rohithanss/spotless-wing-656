@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import PrimeVue from "primevue/config";
 import App from "./App.vue";
-import router from "./router";
 import "./assets/main.css";
 
 import ToastService from "primevue/toastservice";
@@ -13,6 +12,9 @@ import "primevue/resources/themes/saga-blue/theme.css";
 // import "primevue/resources/themes/soho-light/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
+
+import router from "./router";
+import isLoggedIn from "./scripts/isLoggedIn.js";
 
 import Toast from "primevue/toast";
 import Button from "primevue/button";
@@ -52,10 +54,12 @@ app.component("Checkbox", Checkbox);
 app.component("MultiSelect", MultiSelect);
 app.component("Calendar", Calendar);
 
+// app.provide("backendURL", "https://flash-typer.onrender.com");
+app.provide("backendURL", "http://localhost:8000");
+app.provide("isLoggedIn", isLoggedIn);
+
 app.use(ConfirmationService);
 app.use(ToastService);
-
-app.config.globalProperties.$backendURL = "http://localhost:8080";
 app.use(router);
 app.use(PrimeVue);
 app.mount("#app");

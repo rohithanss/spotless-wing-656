@@ -7,6 +7,10 @@ import { useVuelidate } from "@vuelidate/core";
 
 import { useToast } from "primevue/usetoast";
 
+const url = inject("backendURL");
+
+// const props = defineProps(["profile"]);
+
 let submitted = ref(false);
 const isLoading = ref(false);
 const password = ref("");
@@ -23,18 +27,30 @@ async function login(isValid) {
   submitted.value = true;
   if (isValid) {
     try {
-      let res = await axios.post("http://localhost:8000/auth/login", {
+      let res = await axios.post(`${url}/auth/login`, {
         email: email1.value,
         password: password.value,
       });
 
-      console.log(await res.data);
-      toast.add({
-        severity: "success",
-        summary: "Info Message",
-        detail: "Message Content",
-        life: 3000,
-      });
+      res = await res.data;
+      console.log(res);
+      if (res.token) {
+        toast.add({
+          severity: "success",
+          summary: "Log in",
+          detail: "Logged in Successful",
+          life: 3000,
+        });
+        localStorage.setItem("token", res.token);
+        window.location = "/";
+      } else {
+        toast.add({
+          severity: "error",
+          summary: "Info Message",
+          detail: "Message Content",
+          life: 3000,
+        });
+      }
     } catch (err) {
       toast.add({
         severity: "error",
