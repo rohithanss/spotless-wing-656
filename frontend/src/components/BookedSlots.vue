@@ -12,7 +12,11 @@
     <div class="filterSection">
       <div>
         <p>Select Date:</p>
-        <Calendar v-model="searchDate" :showTime="false" />
+        <Calendar
+          v-model="searchDate"
+          :showTime="false"
+          :showButtonBar="true"
+        />
       </div>
 
       <div>
@@ -59,6 +63,7 @@
         :zoomLink="zoomLink"
       />
     </div>
+    {{ date }}
   </div>
 </template>
 
@@ -76,17 +81,18 @@ const trainerTypes = ref([
 
 const selectedTrainerTypes = ref([...trainerTypes.value]);
 
-const searchDate = ref(new Date());
+const searchDate = ref(null);
 
 const date = computed(() => {
-  let day = searchDate.value.getDate();
-  let month = searchDate.value.getMonth() + 1;
-  let year = searchDate.value.getFullYear();
+  if (searchDate.value == null) return "nodate";
+  let day = searchDate.value?.getDate();
+  let month = searchDate.value?.getMonth() + 1;
+  let year = searchDate.value?.getFullYear();
   return (
     "" +
-    year +
-    (month < 10 ? "0" + month : month) +
-    (day < 10 ? "0" + day : day)
+      year +
+      (month < 10 ? "0" + month : month) +
+      (day < 10 ? "0" + day : day) || "abc"
   );
 });
 
