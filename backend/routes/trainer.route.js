@@ -25,9 +25,9 @@ trainerRouter.get('/availableslots', async (req,res) => {
     const curr_date = date.toISOString().split('T')[0];
     const q = req.query;
     const queDate = q?.selected_date;
-    console.log(queDate);
+    // console.log(queDate);
 
-    if(queDate === "nodate"){
+    if(queDate === 'nodate'){
         // console.log('empty str cond');
         await bookings.findAll({
             where: {
