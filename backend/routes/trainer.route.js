@@ -27,7 +27,7 @@ trainerRouter.get('/availableslots', async (req,res) => {
     const queDate = q?.selected_date;
     console.log(queDate);
 
-    if(queDate === ""){
+    if(queDate === "nodate"){
         // console.log('empty str cond');
         await bookings.findAll({
             where: {
@@ -109,7 +109,7 @@ trainerRouter.delete('/closeslot', async (req,res) => {
 
     await bookings.destroy({
         where : {
-            id : 1
+            id
         }
     })
     .then(() => {
