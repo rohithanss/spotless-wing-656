@@ -25,17 +25,32 @@ trainerRouter.get('/availableslots', async (req,res) => {
     const curr_date = date.toISOString().split('T')[0];
     const q = req.query;
     const queDate = q?.selected_date;
-    // console.log(queDate);
+    var activity_type = q?.type;
+    activity_type = activity_type.split(",");
+    activity_type[0] = activity_type[0].substring(1);
+    activity_type[activity_type.length - 1] = activity_type[activity_type.length - 1].substring(
+        0,
+        activity_type[activity_type.length - 1].length - 1
+    );
+    activity_type.forEach((x, i) => {
+        activity_type[i] = activity_type[i].includes('"') ? activity_type[i].replaceAll('"', "").trim()
+            : activity_type[i].replaceAll("'", "").trim();
+    });
+
+    console.log(activity_type);
 
     if(queDate === 'nodate'){
         // console.log('empty str cond');
         await bookings.findAll({
             where: {
                 trainer_id,
-                [Op.or]: [{ six: 1 }, { seven: 1 }, { eight: 1 }, { nine: 1 }, { ten: 1 }, { eleven: 1 }, { twelve: 1 }, { one: 1 }, { two: 1 }, { three: 1 }, { four: 1 }, { five: 1 }, { six_eve: 1 }, { seven_eve: 1 }, { eight_eve: 1 }],
                 reg_date: {
                     [Op.gte]: curr_date,
-                }
+                },
+                activity_type : {
+                    [Op.or] : activity_type
+                },
+                [Op.or]: [{ six: 1 }, { seven: 1 }, { eight: 1 }, { nine: 1 }, { ten: 1 }, { eleven: 1 }, { twelve: 1 }, { one: 1 }, { two: 1 }, { three: 1 }, { four: 1 }, { five: 1 }, { six_eve: 1 }, { seven_eve: 1 }, { eight_eve: 1 }]
             }
         })
             .then((slots) => {
@@ -51,6 +66,9 @@ trainerRouter.get('/availableslots', async (req,res) => {
             where: {
                 trainer_id,
                 reg_date: queDate,
+                activity_type: {
+                    [Op.or]: activity_type
+                },
                 [Op.or]: [{ six: 1 }, { seven: 1 }, { eight: 1 }, { nine: 1 }, { ten: 1 }, { eleven: 1 }, { twelve: 1 }, { one: 1 }, { two: 1 }, { three: 1 }, { four: 1 }, { five: 1 }, { six_eve: 1 }, { seven_eve: 1 }, { eight_eve: 1 }]
             }
         })
