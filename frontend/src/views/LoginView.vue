@@ -7,9 +7,7 @@ import { useVuelidate } from "@vuelidate/core";
 
 import { useToast } from "primevue/usetoast";
 
-const url = inject("backendURL");
-
-// const props = defineProps(["profile"]);
+import { login } from "../scripts/api.js";
 
 let submitted = ref(false);
 const isLoading = ref(false);
@@ -23,18 +21,14 @@ const rules = {
 const toast = useToast();
 const v$ = useVuelidate(rules, { password, email1 });
 
-async function login(isValid) {
+async function doLogin(isValid) {
   submitted.value = true;
   if (isValid) {
     try {
-      let res = await axios.post(`${url}/auth/login`, {
-        email: email1.value,
-        password: password.value,
-      });
+      let res = await login(email1.value, password.value);
 
-      res = await res.data;
       console.log(res);
-      if (res.token) {
+      if (res.status == "success") {
         toast.add({
           severity: "success",
           summary: "Log in",
@@ -43,18 +37,25 @@ async function login(isValid) {
         });
         localStorage.setItem("token", res.token);
         window.location = "/";
-      } else {
+      } else if (res.status == "fail") {
         toast.add({
           severity: "error",
-          summary: "Info Message",
+          summary: "Wrong Credentials",
+          detail: "Please enter credentials carefully.",
+          life: 3000,
+        });
+      } else {
+        toast.add({
+          severity: "warning",
+          summary: "Something went wrong while logging in",
           detail: "Message Content",
           life: 3000,
         });
       }
     } catch (err) {
       toast.add({
-        severity: "error",
-        summary: "Info Message",
+        severity: "warning",
+        summary: "Something went wrong while logging in",
         detail: "Message Content",
         life: 3000,
       });
@@ -72,7 +73,7 @@ async function login(isValid) {
 <template>
   <div id="container">
     <h1>Login at Broh</h1>
-    <form class="login-form" @submit.prevent="login(!v$.$invalid)">
+    <form class="login-form" @submit.prevent="doLogin(!v$.$invalid)">
       <InputText
         type="email"
         name=""
@@ -94,7 +95,12 @@ async function login(isValid) {
       />
       <RouterLink to="/forgetpassword"> Forget Password? </RouterLink>
 
-      <Button type="submit" label="Log in" :loading="isLoading" />
+      <Button
+        type="submit"
+        label="Log in"
+        :loading="isLoading"
+        :disabled="v$.$invalid"
+      />
     </form>
     <RouterLink to="/signup">
       <Button class="p-button-secondary" label="New User? Create Account" />

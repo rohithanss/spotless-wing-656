@@ -1,10 +1,10 @@
 <template>
-  <div class="main">
+  <div v-if="profile.role == 'trainer'" class="main">
     <h1>Open Slots for Booking and Start Earning</h1>
-    <form @submit.prevent="createSlot" class="create-slot-form">
+    <form @submit.prevent="openSlots" class="create-slot-form">
       <div class="slot-date">
         <p>Select Date:</p>
-        <Calendar v-model="slotDate" :showTime="false" />
+        <Calendar v-model="slotDate" :showTime="false" :showButtonBar="true" />
       </div>
       <div class="slot-category">
         <p>Select Category:</p>
@@ -27,6 +27,18 @@
             <p>{{ time }}</p>
           </div>
         </div>
+      </div>
+      <div
+        v-show="requiredFields != null"
+        :style="{
+          width: '100%',
+          display: 'flex',
+          gridArea: 'requiredFields',
+          justifyContent: 'center',
+          marginTop: '20px',
+        }"
+      >
+        <p :style="{ color: 'red' }">Select {{ requiredFields }}</p>
       </div>
       <div
         class="slot-btn"
@@ -54,23 +66,29 @@
         />
       </div>
     </form>
-    {{ date }}
-    {{ category }}
-    {{ slots }}
-    {{ fee }}
+  </div>
+
+  <div v-else class="main">
+    <h1>401 NOT AUTHORIZED: You are not authorized</h1>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
 
+import { createSlots } from "../scripts/api.js";
+
+const props = defineProps(["profile"]);
+
 const slots = ref([]);
-const slotDate = ref(new Date());
-const category = ref("");
+const slotDate = ref(null);
+const category = ref({});
 const fee = ref(0);
 const isLoading = ref(false);
+const requiredFields = ref(null);
 
-const date = computed(() => {
+const reg_date = computed(() => {
+  if (slotDate.value == null) return "nodate";
   let day = slotDate.value.getDate();
   let month = slotDate.value.getMonth() + 1;
   let year = slotDate.value.getFullYear();
@@ -82,6 +100,18 @@ const date = computed(() => {
   );
 });
 
+const activity_type = computed(() => {
+  return category.value?.value || "";
+});
+
+const selectedSlots = computed(() => {
+  let obj = {};
+  slots.value.forEach((el) => {
+    obj[el] = true;
+  });
+  return obj;
+});
+
 const categoryOptions = ref([
   { name: "Gym", value: "Gym" },
   { name: "Yoga", value: "Yoga" },
@@ -90,16 +120,80 @@ const categoryOptions = ref([
   { name: "Weight Gain", value: "Weight Gain" },
 ]);
 
-async function createSlot() {
+async function openSlots() {
   //create slot
-  console.log("creating slots");
+  let isValid = isFormValid();
+  if (isValid) {
+    isLoading.value = true;
+
+    try {
+      let res = await createSlots(
+        reg_date.value,
+        fee.value,
+        activity_type.value,
+        selectedSlots.value
+      );
+
+      console.log(res);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }
 
 function resetForm() {
   slots.value = [];
-  slotDate.value = new Date();
+  slotDate.value = null;
   category.value = "";
   fee.value = 0;
+  requiredFields.value = null;
+}
+
+function isFormValid() {
+  let errors = [];
+
+  let currDate = curr_date();
+
+  if (reg_date.value == "nodate") {
+    errors.push("Slot Date");
+  } else {
+    if (+reg_date.value < +currDate) {
+      errors.push("Today Date or later");
+    }
+  }
+
+  if (activity_type.value == "") {
+    errors.push("Category");
+  }
+
+  if (fee.value < 1) {
+    errors.push("Fees greater than 0");
+  }
+
+  if (slots.value.length < 1) {
+    errors.push("At least one Time Slot");
+  }
+
+  if (errors.length > 0) {
+    requiredFields.value = errors.join(", ");
+    return false;
+  }
+  requiredFields.value = null;
+  return true;
+}
+
+function curr_date() {
+  let day = new Date().getDate();
+  let month = new Date().getMonth() + 1;
+  let year = new Date().getFullYear();
+  return (
+    "" +
+    year +
+    (month < 10 ? "0" + month : month) +
+    (day < 10 ? "0" + day : day)
+  );
 }
 
 const allSlots = {
@@ -138,6 +232,7 @@ const allSlots = {
   grid-template-areas:
     "date category fee"
     "selectSlots selectSlots selectSlots"
+    "requiredFields requiredFields requiredFields"
     "slotBtn slotBtn slotBtn";
   gap: 20px;
   margin: 20px 0;

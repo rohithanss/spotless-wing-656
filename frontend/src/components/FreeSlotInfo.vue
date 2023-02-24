@@ -65,32 +65,129 @@
       }"
     >
       <Button
+        @click="
+          ($event) => {
+            closeAll($event);
+          }
+        "
         label="Close All Slots"
         class="p-button-danger"
         :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
+        :loading="isLoading2"
       />
       <Button
         class="p-button-warning"
+        @click="doReserverSlot"
         :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
         :disabled="slot == null || isLoading"
+        :loading="isLoading"
       >
         Reserve Selected Slot</Button
       >
     </div>
   </div>
+  <ConfirmPopup></ConfirmPopup>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
+import { reserveSlot, closeAllSlots } from "../scripts/api.js";
+import { useToast } from "primevue/usetoast";
+
+import { useConfirm } from "primevue/useconfirm";
+
+const confirm = useConfirm();
+const toast = useToast();
 
 const props = defineProps(["id", "reg_date", "activity_type", "fee", "slots"]);
 
+const emits = defineEmits(["reserveSlot", "deleteAll"]);
+
 const isLoading = ref(false);
+const isLoading2 = ref(false);
 
 const selectedSlot = ref({ value: null, time: "Select Slot" });
 
 const slot = computed(() => selectedSlot.value.value);
 
+async function doReserverSlot() {
+  if (slot.value != null) {
+    let obj = {};
+    obj[slot.value] = false;
+
+    try {
+      let res = await reserveSlot(props.id, obj);
+
+      console.log(res);
+      if (res.status == "success") {
+        toast.add({
+          severity: "success",
+          summary: "Slot Reserved",
+          detail: "Your slot availability changed successfully",
+          life: 3000,
+        });
+        emits("reserveSlot", slot.value);
+        selectedSlot.value = { value: null, time: "Select Slot" };
+      } else {
+        toast.add({
+          severity: "error",
+          summary: "Slot reserving failed",
+          detail: "Something went wrong while updating slot",
+          life: 3000,
+        });
+      }
+    } catch (err) {
+      toast.add({
+        severity: "error",
+        summary: "Slot reserving failed",
+        detail: "Something went wrong while updating slot",
+        life: 3000,
+      });
+      console.log(err);
+    }
+  }
+}
+
+async function closeAll(event) {
+  let id = props.id;
+  confirm.require({
+    target: event.currentTarget,
+    message: `Are you sure you want to close all slots?`,
+    icon: "pi pi-exclamation-triangle",
+    accept: () => {
+      //callback to execute when user confirms the action
+
+      closeAllSlots(id)
+        .then((res) => {
+          if (res.status == "success") {
+            toast.add({
+              severity: "success",
+              summary: "Slots Deleted",
+              detail: "Your slots closed successfully",
+              life: 3000,
+            });
+            emits("deleteAll", id);
+          } else {
+            toast.add({
+              severity: "error",
+              summary: "Slots Not Deleted",
+              detail: "Something Went wrong while closing slots",
+              life: 3000,
+            });
+          }
+        })
+        .catch((err) => {
+          toast.add({
+            severity: "error",
+            summary: "Slots Not Deleted",
+            detail: "Something Went wrong while closing slots",
+            life: 3000,
+          });
+          console.log(err);
+        });
+    },
+  });
+}
 const backgroundColor =
   props.activity_type == "Gym"
     ? "black"
