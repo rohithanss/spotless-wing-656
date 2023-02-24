@@ -29,29 +29,49 @@
     <div :style="{ width: '50%' }">
       <table>
         <tr>
-          <th>Trainer:</th>
-          <td>{{ name }}</td>
+          <th>Trainee:</th>
+          <td>{{ traineeName }}</td>
         </tr>
         <tr>
           <th>Type:</th>
           <td>{{ activity_type }}</td>
         </tr>
         <tr>
-          <th>Email:</th>
-          <td>{{ email }}</td>
+          <th>Trainee Email:</th>
+          <td>{{ traineeEmail }}</td>
         </tr>
         <tr>
           <th>Fee(per session):</th>
           <td>Rs. {{ fee }}</td>
         </tr>
         <tr>
-          <th>Time Slot:</th>
-          <td>
-            <Dropdown
-              v-model="selectedSlot"
-              :options="slots"
-              optionLabel="time"
-              placeholder="Select Time Slot"
+          <th>Slot:</th>
+          <td>{{ allSlots[slot] }} - {{ reg_date }}</td>
+        </tr>
+        <tr>
+          <th>Zoom Link:</th>
+          <td :style="{ display: 'flex' }">
+            <InputText
+              type="text"
+              v-model="zoomLinkValue"
+              :disabled="editLink"
+            />
+            <i
+              @click="
+                () => {
+                  editLink = !editLink;
+                }
+              "
+              class="pi pi-pencil"
+              :style="{
+                border: '1px solid #c92d2d',
+                borderRadius: '5px',
+                padding: '7px',
+                fontSize: '1.4rem',
+                cursor: 'pointer',
+                marginLeft: '10px',
+                color: '#c92d2d',
+              }"
             />
           </td>
         </tr>
@@ -67,20 +87,10 @@
       }"
     >
       <Button
-        class="p-button-success"
-        :style="{
-          fontSize: '1.2rem',
-          fontWeight: '600',
-          width: '80%',
-          justifyContent: 'center',
-        }"
-        @click="
-          () => {
-            bookSlot();
-          }
-        "
+        class="p-button-info"
+        :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
       >
-        Book Now
+        Update Link
       </Button>
     </div>
   </div>
@@ -89,28 +99,20 @@
 <script setup>
 import { ref, computed } from "vue";
 
-import { bookTraining } from "../scripts/api.js";
-
-const emits = defineEmits(["updateTraining"]);
-
 const props = defineProps([
-  "id",
-  "name",
+  "traineeName",
+  "traineeEmail",
+  "traineeId",
   "activity_type",
   "fee",
   "email",
-  "slots",
+  "slot",
+  "reg_date",
+  "zoomLink",
 ]);
 
-const selectedSlot = ref({ value: null, time: "Select Slot" });
-
-const slot = computed(() => selectedSlot.value.value);
-
-async function bookSlot() {
-  try {
-    let res = await bookTraining(props.id);
-  } catch (err) {}
-}
+const zoomLinkValue = ref(props.zoomLink);
+const editLink = ref(true);
 
 const backgroundColor =
   props.activity_type == "Gym"
@@ -124,6 +126,24 @@ const backgroundColor =
     : props.activity_type == "Weight Gain"
     ? "#0272A2"
     : "black";
+
+const allSlots = {
+  six: "06:00 AM",
+  seven: "07:00 AM",
+  eight: "08:00 AM",
+  nine: "06:00 AM",
+  ten: "10:00 AM",
+  eleven: "11:00 AM",
+  twelve: "12:00 PM",
+  one: "01:00 PM",
+  two: "02:00 PM",
+  three: "3:00 PM",
+  four: "04:00 PM",
+  five: "05:00 PM",
+  six_eve: "06:00 PM",
+  seven_eve: "07:00 PM",
+  eight_eve: "08:00 PM",
+};
 </script>
 
 <style scoped>

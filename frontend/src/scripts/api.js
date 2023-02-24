@@ -113,7 +113,7 @@ async function getFreeSlots(reg_date, activity_type) {
   let token = localStorage.getItem("token");
   try {
     let res = await axios.get(
-      `${url}/trainer/availableslots?selected_date=${reg_date}&activity_type=${activity_type}`,
+      `${url}/trainer/availableslots?selected_date=${reg_date}&type=${activity_type}`,
       {
         headers: {
           authorization: `Bearer ${token}`,
@@ -128,6 +128,10 @@ async function getFreeSlots(reg_date, activity_type) {
     };
   }
 }
+
+async function getBookedSlots() {}
+
+async function updatedBookedSlots() {}
 
 async function reserveSlot(id, slots) {
   let token = localStorage.getItem("token");
@@ -153,8 +157,7 @@ async function reserveSlot(id, slots) {
 async function closeAllSlots(id) {
   let token = localStorage.getItem("token");
   try {
-    let res = await axios.delete(`${url}/trainer/closeslot`, {
-      body: { id },
+    let res = await axios.delete(`${url}/trainer/closeslot/${id}`, {
       headers: {
         authorization: `Bearer ${token}`,
       },
@@ -166,6 +169,71 @@ async function closeAllSlots(id) {
   }
 }
 
+async function getAllTrainings(reg_date, type, sort) {
+  console.log(reg_date, type, sort);
+  return {
+    data: [
+      {
+        id: 1,
+        name: "Rohit",
+        email: "rhans@icloud.com",
+        activity_type: "Yoga",
+        fee: 1000,
+        six: true,
+        seven: true,
+        six_eve: true,
+      },
+      {
+        id: 1,
+        name: "Rohit",
+        email: "rhans@icloud.com",
+        activity_type: "Fat Loss",
+        fee: 1000,
+        six: true,
+        seven: true,
+        six_eve: true,
+      },
+      {
+        id: 1,
+        name: "Brijesh",
+        email: "brijesh@icloud.com",
+        activity_type: "Gym",
+        fee: 1500,
+
+        ten: true,
+        eleven: true,
+        four: true,
+        five: true,
+      },
+      {
+        id: 1,
+        name: "Brijesh",
+        email: "brijesh@icloud.com",
+        activity_type: "Diet",
+        fee: 500,
+
+        eight: true,
+        twelve: true,
+        three: true,
+        seven_eve: true,
+      },
+      {
+        id: 1,
+        name: "Brijesh",
+        email: "brijesh@icloud.com",
+        activity_type: "Weight Gain",
+        fee: 500,
+
+        eight: true,
+        twelve: true,
+        three: true,
+        seven_eve: true,
+      },
+    ],
+  };
+}
+
+async function bookTraining() {}
 export {
   isLoggedIn,
   logout,
@@ -175,4 +243,6 @@ export {
   getFreeSlots,
   reserveSlot,
   closeAllSlots,
+  getAllTrainings,
+  bookTraining,
 };

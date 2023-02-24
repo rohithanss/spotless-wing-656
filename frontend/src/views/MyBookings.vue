@@ -1,8 +1,13 @@
 <template>
-  <div class="main"><h1>My Bookings Page</h1></div>
+  <div class="main">
+    <h1>My Bookings Page</h1>
+    <MyBookingInfo />
+  </div>
 </template>
 
-<script setup></script>
+<script setup>
+import MyBookingInfo from "../components/MyBookingInfo.vue";
+</script>
 
 <style scoped>
 .main {

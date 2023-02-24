@@ -51,9 +51,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 
 import TrainingInfo from "../components/TrainingInfo.vue";
+import { getAllTrainings } from "../scripts/api.js";
+
 const trainerTypes = ref([
   { type: "Gym", value: "Gym" },
   { type: "Yoga", value: "Yoga" },
@@ -64,9 +66,10 @@ const trainerTypes = ref([
 
 const selectedTrainerTypes = ref([...trainerTypes.value]);
 
-const searchDate = ref(new Date());
+const searchDate = ref(null);
 
-const date = computed(() => {
+const reg_date = computed(() => {
+  if (searchDate.value == null) return "nodate";
   let day = searchDate.value.getDate();
   let month = searchDate.value.getMonth() + 1;
   let year = searchDate.value.getFullYear();
@@ -78,65 +81,34 @@ const date = computed(() => {
   );
 });
 
-const sort = ref();
+const sort = ref({});
 const sortOptions = [
   { name: "High to Low", value: "desc" },
   { name: "Low to High", value: "asc" },
 ];
 
-const data = ref([
-  {
-    name: "Rohit",
-    email: "rhans@icloud.com",
-    activity_type: "Yoga",
-    fee: 1000,
-    six: true,
-    seven: true,
-    six_eve: true,
-  },
-  {
-    name: "Rohit",
-    email: "rhans@icloud.com",
-    activity_type: "Fat Loss",
-    fee: 1000,
-    six: true,
-    seven: true,
-    six_eve: true,
-  },
-  {
-    name: "Brijesh",
-    email: "brijesh@icloud.com",
-    activity_type: "Gym",
-    fee: 1500,
+const activity_type = computed(() => {
+  return selectedTrainerTypes.value.map((el) => el.value);
+});
 
-    ten: true,
-    eleven: true,
-    four: true,
-    five: true,
-  },
-  {
-    name: "Brijesh",
-    email: "brijesh@icloud.com",
-    activity_type: "Diet",
-    fee: 500,
+const data2 = ref([]);
 
-    eight: true,
-    twelve: true,
-    three: true,
-    seven_eve: true,
-  },
-  {
-    name: "Brijesh",
-    email: "brijesh@icloud.com",
-    activity_type: "Weight Gain",
-    fee: 500,
+watchEffect(async () => {
+  const res = await getAllTrainings(
+    reg_date.value,
+    activity_type.value,
+    sort.value.value
+  );
+  data2.value = await res.data;
+});
 
-    eight: true,
-    twelve: true,
-    three: true,
-    seven_eve: true,
-  },
-]);
+const data = computed(() => {
+  data2.value.forEach((el, i) => {
+    let slots = slotsObj(data2.value[i], allSlots);
+    data2.value[i]["slots"] = slots;
+  });
+  return data2.value;
+});
 
 function slotsObj(data, allSlots) {
   let slotsArr = [];
@@ -170,11 +142,6 @@ const allSlots = {
   seven_eve: "07:00 PM",
   eight_eve: "08:00 PM",
 };
-
-data.value.forEach((el, i) => {
-  let slots = slotsObj(data.value[i], allSlots);
-  data.value[i]["slots"] = slots;
-});
 </script>
 
 <style scoped>
