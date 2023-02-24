@@ -14,7 +14,6 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 
 import router from "./router";
-import isLoggedIn from "./scripts/isLoggedIn.js";
 
 import Toast from "primevue/toast";
 import Button from "primevue/button";
@@ -33,6 +32,7 @@ import Galleria from "primevue/galleria";
 import Checkbox from "primevue/checkbox";
 import MultiSelect from "primevue/multiselect";
 import Calendar from "primevue/calendar";
+import ConfirmPopup from "primevue/confirmpopup";
 
 const app = createApp(App);
 
@@ -53,10 +53,10 @@ app.component("Galleria", Galleria);
 app.component("Checkbox", Checkbox);
 app.component("MultiSelect", MultiSelect);
 app.component("Calendar", Calendar);
+app.component("ConfirmPopup", ConfirmPopup);
 
 // app.provide("backendURL", "https://flash-typer.onrender.com");
 app.provide("backendURL", "http://localhost:8000");
-app.provide("isLoggedIn", isLoggedIn);
 
 app.use(ConfirmationService);
 app.use(ToastService);

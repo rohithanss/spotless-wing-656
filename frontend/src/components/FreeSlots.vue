@@ -12,7 +12,11 @@
     <div class="filterSection">
       <div>
         <p>Select Date:</p>
-        <Calendar v-model="searchDate" :showTime="false" />
+        <Calendar
+          v-model="searchDate"
+          :showTime="false"
+          :showButtonBar="true"
+        />
       </div>
 
       <div>
@@ -37,20 +41,38 @@
       }"
     >
       <FreeSlotInfo
-        v-for="{ id, activity_type, fee, slots, reg_date } in data"
+        v-show="data.length > 0"
+        v-for="{ id, activity_type, fees, slots, reg_date } in data"
         :id="id"
         :activity_type="activity_type"
-        :fee="fee"
+        :fee="fees"
         :slots="slots"
         :reg_date="reg_date"
+        :key="id"
+        @reserveSlot="
+          (slot) => {
+            updateSlotData(id, slot);
+          }
+        "
+        @deleteAll="
+          (id) => {
+            deleteAllSlot(id);
+          }
+        "
       />
+
+      <h1 v-show="data.length < 1" :style="{ color: 'red' }">
+        No Slots Available for Selected Criteria
+      </h1>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import FreeSlotInfo from "./FreeSlotInfo.vue";
+
+import { getFreeSlots } from "../scripts/api.js";
 
 const trainerTypes = ref([
   { type: "Gym", value: "Gym" },
@@ -62,9 +84,10 @@ const trainerTypes = ref([
 
 const selectedTrainerTypes = ref([...trainerTypes.value]);
 
-const searchDate = ref(new Date());
+const searchDate = ref(null);
 
-const date = computed(() => {
+const reg_date = computed(() => {
+  if (searchDate.value == null) return "nodate";
   let day = searchDate.value.getDate();
   let month = searchDate.value.getMonth() + 1;
   let year = searchDate.value.getFullYear();
@@ -76,60 +99,58 @@ const date = computed(() => {
   );
 });
 
-const data = ref([
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Yoga",
-    fee: 1000,
-    six: true,
-    seven: true,
-    six_eve: true,
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Fat Loss",
-    fee: 1000,
-    six: true,
-    seven: true,
-    six_eve: true,
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Gym",
-    fee: 1500,
+const activity_type = computed(() => {
+  return selectedTrainerTypes.value.map((el) => el.value);
+});
 
-    ten: true,
-    eleven: true,
-    four: true,
-    five: true,
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Diet",
-    fee: 500,
+const data2 = ref([]);
 
-    eight: true,
-    twelve: true,
-    three: true,
-    seven_eve: true,
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Weight Gain",
-    fee: 500,
+watchEffect(async () => {
+  const res = await getFreeSlots(reg_date.value, activity_type.value);
+  data2.value = await res.data;
+});
 
-    eight: true,
-    twelve: true,
-    three: true,
-    seven_eve: true,
-  },
-]);
+const data = computed(() => {
+  data2.value.forEach((el, i) => {
+    let slots = slotsObj(data2.value[i], allSlots);
+    data2.value[i]["slots"] = slots;
+  });
+  return data2.value;
+});
 
+function updateSlotData(id, slot) {
+  data2.value.forEach((el, i) => {
+    if (el.id == id) {
+      console.log(el);
+      data2.value[i][slot] = false;
+    }
+  });
+}
+function deleteAllSlot(id) {
+  //   confirm.require({
+  //     target: event.currentTarget,
+  //     message: `Are you sure you want to close all slots?`,
+  //     icon: "pi pi-exclamation-triangle",
+  //     accept: () => {
+  //       //callback to execute when user confirms the action
+  //       try {
+  //         closeAllSlots(id).then((res) => {
+  //           if (res.status == "success") {
+  let idx;
+  data2.value.forEach((el, i) => {
+    if (el.id == id) {
+      idx = i;
+    }
+  });
+  data.value.splice(idx, 1);
+  //           }
+  //         });
+  //       } catch (err) {
+  //         console.log(err);
+  //       }
+  //     },
+  //   });
+}
 function slotsObj(data, allSlots) {
   let slotsArr = [];
 

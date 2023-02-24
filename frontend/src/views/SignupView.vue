@@ -8,6 +8,8 @@ import { useVuelidate } from "@vuelidate/core";
 import { useToast } from "primevue/usetoast";
 import { computed } from "@vue/reactivity";
 
+import { signup } from "../scripts/api.js";
+
 let submitted = ref(false);
 const isLoading = ref(false);
 const password = ref("");
@@ -29,43 +31,61 @@ const rules = {
 const toast = useToast();
 const v$ = useVuelidate(rules, { password, email1, name, mobile });
 
-async function signup(isValid) {
+async function doSignup(isValid) {
   submitted.value = true;
 
   if (isValid) {
-    toast.add({
-      severity: "info",
-      summary: "Info Message",
-      detail: "Message Content",
-      life: 3000,
-    });
     try {
-      let res = await axios.post("http://localhost:8000/auth/signup", {
-        name: name.value,
-        email: email1.value,
-        phone: mobile.value,
-        password: password.value,
-        role: role.value,
-      });
+      let res = await signup(
+        name.value,
+        email1.value,
+        mobile.value,
+        password.value,
+        role.value
+      );
 
-      console.log(await res.data);
+      console.log(await res);
+
+      if (res.status == "success") {
+        toast.add({
+          severity: "success",
+          summary: "Signup Successful",
+          detail: "Your account created successfully",
+          life: 3000,
+        });
+        setTimeout(() => {
+          window.location = "/login";
+        }, 3000);
+      } else if (res.status == "fail") {
+        toast.add({
+          severity: "error ",
+          summary: "User already exists",
+          detail: "Try logging in",
+          life: 3000,
+        });
+      } else {
+        toast.add({
+          severity: "warning",
+          summary: "Signup Failed",
+          detail: "Something went wrong while creating account",
+          life: 3000,
+        });
+      }
     } catch (err) {
-      console.log(err);
+      toast.add({
+        severity: "warning",
+        summary: "Signup Failed",
+        detail: "Something went wrong while creating account",
+        life: 3000,
+      });
     }
-  } else {
-    toast.add({
-      severity: "error",
-      summary: "Info Message",
-      detail: "Message Content",
-      life: 3000,
-    });
   }
 }
 </script>
 <template>
   <div id="container">
     <h1>Join Broh Fitness</h1>
-    <form class="login-form" @submit.prevent="signup(!v$.$invalid)">
+    <form class="login-form" @submit.prevent="doSignup(!v$.$invalid)">
       <InputText
         name=""
         id=""
