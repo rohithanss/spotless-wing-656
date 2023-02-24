@@ -128,7 +128,7 @@ bookingRouter.get('/user', authRole(['user']), async (req,res) => {
 
 })
 
-bookingRouter.patch('/bookslot', authRole(['user']) , async (req,res) => {
+bookingRouter.post('/bookslot', authRole(['user']) , async (req,res) => {
     const {userID,trainer_id,booked_date,slot,type} = req.body;
     // const update_slot = ());
 
