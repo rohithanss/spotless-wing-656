@@ -2,6 +2,11 @@ const express = require("express");
 const { Op } = require("sequelize");
 
 const bookings = require('../models/booking.model');
+const users = require('../models/user.model');
+
+users.hasMany(bookings,{foreignKey : 'trainer_id',as:'trainerData'})
+bookings.belongsTo(users, { foreignKey: 'trainer_id', as: 'trainerData' })
+
 
 const userRouter = express.Router();
 
@@ -12,6 +17,8 @@ userRouter.get('/availableslots', async (req,res) => {
     const queDate = q?.selected_date;
     var activity_type = q?.type;
     activity_type = activity_type.split(",");
+
+    console.log(activity_type);
 
     if(queDate === 'nodate'){
         await bookings.findAll({
@@ -38,7 +45,12 @@ userRouter.get('/availableslots', async (req,res) => {
                     { six_eve: 1 },
                     { seven_eve: 1 },
                     { eight_eve: 1 },
-                ]
+                ],
+                include: [{
+                    model: users,
+                    as: 'trainerData',
+                    attributes: ['name', 'email', 'phone']
+                }]
             }
         })
         .then((slots) => {
@@ -72,7 +84,12 @@ userRouter.get('/availableslots', async (req,res) => {
                     { seven_eve: 1 },
                     { eight_eve: 1 },
                 ]
-            }
+            },
+            include : [{
+                model : users,
+                as : 'trainerData',
+                attributes : ['name','email','phone']
+            }]
         })
             .then((slots) => {
                 res.status(200).send({ status: 'success', data: slots });
