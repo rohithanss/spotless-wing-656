@@ -30,16 +30,6 @@ trainerRouter.get("/availableslots", async (req, res) => {
   const queDate = q?.selected_date;
   var activity_type = q?.type;
   activity_type = activity_type.split(",");
-  //   console.log(activity_type);
-  //   activity_type[0] = activity_type[0].substring(1);
-  //   activity_type[activity_type.length - 1] = activity_type[
-  //     activity_type.length - 1
-  //   ].substring(0, activity_type[activity_type.length - 1].length - 1);
-  //   activity_type.forEach((x, i) => {
-  //     activity_type[i] = activity_type[i].includes('"')
-  //       ? activity_type[i].replaceAll('"', "").trim()
-  //       : activity_type[i].replaceAll("'", "").trim();
-  //   });
 
   if (queDate === "nodate") {
     // console.log('empty str cond');

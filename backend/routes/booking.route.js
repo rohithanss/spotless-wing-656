@@ -16,17 +16,6 @@ bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
   const queDate = q?.selected_date;
   var activity_type = q?.type;
   activity_type = activity_type.split(",");
-  activity_type[0] = activity_type[0].substring(1);
-  activity_type[activity_type.length - 1] = activity_type[
-    activity_type.length - 1
-  ].substring(0, activity_type[activity_type.length - 1].length - 1);
-  activity_type.forEach((x, i) => {
-    activity_type[i] = activity_type[i].includes('"')
-      ? activity_type[i].replaceAll('"', "").trim()
-      : activity_type[i].replaceAll("'", "").trim();
-  });
-
-  console.log(activity_type);
 
   if (queDate === "nodate") {
     await appointments
@@ -83,17 +72,6 @@ bookingRouter.get("/user", authRole(["user"]), async (req, res) => {
   const queDate = q?.selected_date;
   var activity_type = q?.type;
   activity_type = activity_type.split(",");
-  activity_type[0] = activity_type[0].substring(1);
-  activity_type[activity_type.length - 1] = activity_type[
-    activity_type.length - 1
-  ].substring(0, activity_type[activity_type.length - 1].length - 1);
-  activity_type.forEach((x, i) => {
-    activity_type[i] = activity_type[i].includes('"')
-      ? activity_type[i].replaceAll('"', "").trim()
-      : activity_type[i].replaceAll("'", "").trim();
-  });
-
-  console.log(activity_type);
 
   if (queDate === "nodate") {
     await appointments
@@ -144,7 +122,8 @@ bookingRouter.get("/user", authRole(["user"]), async (req, res) => {
 // Book Slots
 bookingRouter.post("/bookslot", authRole(["user"]), async (req, res) => {
   const { userID, trainer_id, booked_date, slot, type } = req.body;
-  // const update_slot = ());
+  
+  
 
   await bookings
     .update(slot, {

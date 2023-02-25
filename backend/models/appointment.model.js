@@ -16,6 +16,10 @@ const appointments = sequelize.define('appointments',{
         type : DataTypes.INTEGER,
         allowNull : false
     },
+    fees : {
+        type : DataTypes.INTEGER,
+        allowNull : false
+    },
     booked_date : {
         type : DataTypes.DATEONLY,
         allowNull : false
