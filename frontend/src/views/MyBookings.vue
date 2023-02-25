@@ -28,38 +28,28 @@
       }"
     >
       <MyBookingInfo
-        trainerEmail="asdf"
-        trainerName="Rohit"
-        slot="seven"
-        reg_date="2023-02-26"
-        zoomLink="https://rohithanss.github.io"
-        activity_type="Gym"
-        status="completed"
-        fee="1000"
-      />
-      <MyBookingInfo
-        trainerEmail="asdf"
-        trainerName="Rohit"
-        slot="seven"
-        reg_date="2023-02-26"
-        zoomLink="https://rohithanss.github.io"
-        activity_type="Yoga"
-        status="pending"
-        fee="1000"
-      />
-      <MyBookingInfo
-        trainerEmail="asdf"
-        trainerName="Rohit"
-        slot="seven"
-        reg_date="2023-02-26"
-        zoomLink="https://rohithanss.github.io"
-        activity_type="Diet"
-        status="pending"
-        fee="1000"
+        v-for="{
+          id,
+          slot,
+          type,
+          zoom_link,
+          booked_date,
+          booking_status,
+          fees,
+          user: { email, name },
+        } in data"
+        :key="id"
+        :trainerEmail="email"
+        :trainerName="name"
+        :slot="slot"
+        :reg_date="booked_date"
+        :zoomLink="zoom_link"
+        :activity_type="type"
+        :status="booking_status"
+        :fee="fees"
       />
     </div>
   </div>
-  {{ data }}
 </template>
 
 <script setup>

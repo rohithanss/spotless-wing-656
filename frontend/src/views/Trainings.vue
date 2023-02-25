@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" v-if="authorized != 'error'">
     <h1 :style="{ color: 'var(--text-color)' }">
       Choose the time and dates fits you
     </h1>
@@ -8,7 +8,7 @@
         <p>Select Date:</p>
         <Calendar v-model="searchDate" :showTime="false" />
       </div>
-      <div>
+      <!-- <div>
         <p>Sort By Fees:</p>
         <Dropdown
           v-model="sort"
@@ -16,7 +16,7 @@
           optionLabel="name"
           placeholder="Sort By Fee"
         />
-      </div>
+      </div> -->
       <div>
         <p>Filter By Trainer Type:</p>
         <MultiSelect
@@ -42,8 +42,8 @@
         v-for="{
           id,
           trainer_id,
-          name,
-          email,
+          trainerData: { name, email },
+
           activity_type,
           slots,
           fees,
@@ -58,7 +58,17 @@
         :reg_date="reg_date"
         :key="id"
       />
+
+      <h1 :style="{ color: 'red' }" v-if="data.length == 0">
+        No Slots Available for Selected Criteria
+      </h1>
     </div>
+  </div>
+
+  <div v-else class="main">
+    <h1 :style="{ color: 'red' }">
+      You are not Authorized to see this page, try Logging in...
+    </h1>
   </div>
 </template>
 
@@ -92,6 +102,7 @@ const reg_date = computed(() => {
     (day < 10 ? "0" + day : day)
   );
 });
+const authorized = ref();
 
 const sort = ref({});
 const sortOptions = [
@@ -111,6 +122,8 @@ watchEffect(async () => {
     activity_type.value,
     sort.value.value
   );
+  console.log(res);
+  authorized.value = await res.status;
   data2.value = await res.data;
 });
 

@@ -43,33 +43,43 @@
       <BookedSlotInfo
         v-for="{
           id,
-          activity_type,
-          fee,
+          type,
+          fees,
           slot,
-          reg_date,
-          traineeEmail,
-          traineeId,
-          traineeName,
-          zoomLink,
+          booked_date,
+          user: { name, email },
+          booking_status,
+          customer_id,
+
+          zoom_link,
         } in data"
         :id="id"
-        :traineeEmail="traineeEmail"
-        :traineeId="traineeId"
-        :traineeName="traineeName"
-        :activity_type="activity_type"
-        :fee="fee"
+        :traineeEmail="email"
+        :traineeId="customer_id"
+        :traineeName="name"
+        :activity_type="type"
+        :fee="fees"
         :slot="slot"
-        :reg_date="reg_date"
-        :zoomLink="zoomLink"
+        :reg_date="booked_date"
+        :zoomLink="zoom_link"
+        :booking_status="booking_status"
+        @update-details="
+          (id, newZoomValue, newStatusValue) => {
+            updateDetails(id, newZoomValue, newStatusValue);
+          }
+        "
       />
+      <h1 v-if="data.length == 0" :style="{ color: 'red' }">
+        No Data Available
+      </h1>
     </div>
-    {{ date }}
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import BookedSlotInfo from "./BookedSlotInfo.vue";
+import { getBookedSlots } from "../scripts/api.js";
 
 const trainerTypes = ref([
   { type: "Gym", value: "Gym" },
@@ -83,7 +93,7 @@ const selectedTrainerTypes = ref([...trainerTypes.value]);
 
 const searchDate = ref(null);
 
-const date = computed(() => {
+const reg_date = computed(() => {
   if (searchDate.value == null) return "nodate";
   let day = searchDate.value?.getDate();
   let month = searchDate.value?.getMonth() + 1;
@@ -96,66 +106,26 @@ const date = computed(() => {
   );
 });
 
-const data = ref([
-  {
-    id: "1",
-    traineeId: "1",
-    traineeName: "Rohit Hans",
-    traineeEmail: "rhans@icloud.com",
-    slot: "seven",
-    zoomLink: "",
-    reg_date: "2023-02-23",
-    activity_type: "Yoga",
-    fee: 1000,
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Fat Loss",
-    fee: 1000,
-    traineeId: "1",
-    traineeName: "Rohit Hans",
-    traineeEmail: "rhans@icloud.com",
-    slot: "one",
-    zoomLink: "",
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Gym",
-    fee: 1500,
+const activity_type = computed(() => {
+  return selectedTrainerTypes.value.map((el) => el.value);
+});
 
-    traineeId: "1",
-    traineeName: "Rohit Hans",
-    traineeEmail: "rhans@icloud.com",
-    slot: "ten",
-    zoomLink: "",
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Diet",
-    fee: 500,
+const data = ref([]);
 
-    traineeId: "1",
-    traineeName: "Rohit Hans",
-    traineeEmail: "rhans@icloud.com",
-    slot: "eight",
-    zoomLink: "",
-  },
-  {
-    id: "1",
-    reg_date: "2023-02-23",
-    activity_type: "Weight Gain",
-    fee: 500,
+watchEffect(async () => {
+  const res = await getBookedSlots(reg_date.value, activity_type.value);
 
-    traineeId: "1",
-    traineeName: "Rohit Hans",
-    traineeEmail: "rhans@icloud.com",
-    slot: "six",
-    zoomLink: "",
-  },
-]);
+  data.value = await res.data;
+});
+
+function updateDetails(id, newZoomValue, newStatusValue) {
+  data.value.forEach((el, i) => {
+    if (el.id == id) {
+      data.value[i]["zoom_link"] = newZoomValue;
+      data.value[i]["booking_status"] = newStatusValue;
+    }
+  });
+}
 </script>
 
 <style scoped>

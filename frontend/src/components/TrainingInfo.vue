@@ -45,6 +45,10 @@
           <td>Rs. {{ fee }}</td>
         </tr>
         <tr>
+          <th>Date:</th>
+          <td>{{ reg_date }}</td>
+        </tr>
+        <tr>
           <th>Time Slot:</th>
           <td>
             <Dropdown
@@ -116,15 +120,17 @@ const slot = computed(() => selectedSlot.value.value);
 
 async function bookSlot() {
   isLoading.value = true;
+  let obj = {};
+  obj[slot.value] = false;
   try {
     let res = await bookTraining(
       props.trainer_id,
       props.reg_date,
-      { slot: false },
+      obj,
       props.activity_type,
       props.fee
     );
-
+    console.log(res);
     if (res.status == "success") {
       toast.add({
         severity: "success",

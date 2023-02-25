@@ -62,7 +62,8 @@
                   editLink = !editLink;
                 }
               "
-              class="pi pi-pencil"
+              class="pi"
+              :class="[editLink ? 'pi-pencil' : 'pi-times']"
               :style="{
                 border: '1px solid #c92d2d',
                 borderRadius: '5px',
@@ -82,24 +83,44 @@
         flexGrow: '1',
         height: '100%',
         display: 'flex',
-        justifyContent: 'right',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         alignSelf: 'end',
+        gap: '50px',
       }"
     >
+      <Dropdown
+        v-model="bookingStatusValue"
+        :options="statuses"
+        optionLabel="status"
+        placeholder="Select Time Slot"
+        :style="{ width: '90%' }"
+      />
+
       <Button
         class="p-button-info"
+        :disabled="isLoading || !isChange"
+        :loading="isLoading"
         :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
-      >
-        Update Link
-      </Button>
+        @click="
+          () => {
+            updateSlotDetails();
+          }
+        "
+        label=" Update Slot"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+import { useToast } from "primevue/usetoast";
+
+import { updatedBookedSlots } from "../scripts/api.js";
 
 const props = defineProps([
+  "id",
   "traineeName",
   "traineeEmail",
   "traineeId",
@@ -109,10 +130,100 @@ const props = defineProps([
   "slot",
   "reg_date",
   "zoomLink",
+  "booking_status",
+]);
+
+const emits = defineEmits(["updateDetails"]);
+
+const toast = useToast();
+
+const statuses = ref([
+  {
+    status: "Pending",
+    value: "pending",
+  },
+  { status: "Completed", value: "completed" },
 ]);
 
 const zoomLinkValue = ref(props.zoomLink);
+const bookingStatusValue = ref({
+  value: props.booking_status,
+  status: props.booking_status == "pending" ? "Pending" : "Completed",
+});
+
 const editLink = ref(true);
+
+const isChange = ref(false);
+const isLoading = ref(false);
+
+watch(
+  [bookingStatusValue, zoomLinkValue],
+  ([newBookingStatusValue, newZoomLinkValue]) => {
+    isChange.value = true;
+    if (
+      newZoomLinkValue == props.zoomLink &&
+      newBookingStatusValue.value == props.booking_status
+    ) {
+      isChange.value = false;
+    }
+  }
+);
+
+async function updateSlotDetails() {
+  if (zoomLinkValue.value.trim() == "") {
+    toast.add({
+      severity: "warn",
+      summary: "Zoom Link Invalid",
+      detail: "Zoom link field can not empty",
+      life: 3000,
+    });
+  } else {
+    isLoading.value = true;
+    try {
+      let res = await updatedBookedSlots(
+        props.id,
+        zoomLinkValue.value,
+        bookingStatusValue.value.value
+      );
+
+      console.log(res);
+
+      if (res.status == "success") {
+        toast.add({
+          severity: "success",
+          summary: "Slot details",
+          detail: "Slot details updated Successfully",
+          life: 3000,
+        });
+        emits(
+          "updateDetails",
+          props.id,
+          zoomLinkValue.value,
+          bookingStatusValue.value.value
+        );
+        isChange.value = false;
+        editLink.value = true;
+      } else {
+        toast.add({
+          severity: "warn",
+          summary: "Slot not updated",
+          detail: "Something went wrong while updating slot details",
+          life: 3000,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      toast.add({
+        severity: "warn",
+        summary: "Slot not updated",
+        detail: "Something went wrong while updating slot details",
+        life: 3000,
+      });
+    } finally {
+      isLoading.value = false;
+    }
+  }
+}
 
 const backgroundColor =
   props.activity_type == "Gym"

@@ -74,9 +74,15 @@
             openZoomLink();
           }
         "
-        :disabled="status == 'completed'"
+        :disabled="status == 'completed' || zoomLinkValue == 'To be updated'"
       >
-        {{ status == "pending" ? "Join Meet" : "Completed" }}
+        {{
+          zoomLinkValue == "To be updated"
+            ? zoomLinkValue
+            : status == "pending"
+            ? "Join Meet"
+            : "Completed"
+        }}
       </Button>
     </div>
   </div>
