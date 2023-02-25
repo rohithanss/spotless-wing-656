@@ -2,11 +2,15 @@ const express = require("express");
 const { Op } = require("sequelize");
 const omit = require("lodash.omit");
 
+const users = require("../models/user.model");
 const appointments = require("../models/appointment.model");
 const bookings = require("../models/booking.model");
 const authRole = require("../middlewares/authRole");
 
 const bookingRouter = express.Router();
+
+users.hasMany(appointments, { foreignKey: "trainer_id" });
+appointments.belongsTo(users, { foreignKey: "trainer_id" });
 
 bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
   const { userID } = req.body;
@@ -29,6 +33,13 @@ bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
             [Op.gte]: curr_date,
           },
         },
+        include: [
+          {
+            model: users,
+
+            attributes: ["name", "email", "phone"],
+          },
+        ],
       })
       .then((data) => {
         res.status(200).send({ status: "success", data: data });
@@ -49,6 +60,13 @@ bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
           },
           booked_date: queDate,
         },
+        include: [
+          {
+            model: users,
+
+            attributes: ["name", "email", "phone"],
+          },
+        ],
       })
       .then((data) => {
         res.status(200).send({ status: "success", data: data });
@@ -85,6 +103,13 @@ bookingRouter.get("/user", authRole(["user"]), async (req, res) => {
             [Op.gte]: curr_date,
           },
         },
+        include: [
+          {
+            model: users,
+
+            attributes: ["name", "email", "phone"],
+          },
+        ],
       })
       .then((data) => {
         res.status(200).send({ status: "success", data: data });
@@ -105,6 +130,13 @@ bookingRouter.get("/user", authRole(["user"]), async (req, res) => {
           },
           booked_date: queDate,
         },
+        include: [
+          {
+            model: users,
+
+            attributes: ["name", "email", "phone"],
+          },
+        ],
       })
       .then((data) => {
         res.status(200).send({ status: "success", data: data });
@@ -122,32 +154,38 @@ bookingRouter.get("/user", authRole(["user"]), async (req, res) => {
 // Book Slots
 bookingRouter.post("/bookslot", authRole(["user"]), async (req, res) => {
   const { userID, trainer_id, booked_date, slot, fees, type } = req.body;
-  
+
   const slotTime = Object.keys(slot)[0];
   let flag = false;
 
-  await bookings.findAll({
-    where : {
-      reg_date : booked_date,
-      trainer_id,
-      activity_type : type,
-    }
-  })
-  .then((data) => {
-    // return res.send(data)
-    // console.log( 'data :' , data);
-    data.forEach(el=>{
-      if(el[slotTime]==true){
-        flag =true;
-      }
+  await bookings
+    .findAll({
+      where: {
+        reg_date: booked_date,
+        trainer_id,
+        activity_type: type,
+      },
     })
-  })
-  .catch((err) => {
-    console.log(err);
-    return res.status(400).send({status : 'error', msg : 'error finding available slots for booking'})
-  })
+    .then((data) => {
+      // return res.send(data)
+      console.log("data :", data);
+      console.log(slotTime);
+      data.forEach((el) => {
+        if (el[slotTime] == true) {
+          flag = true;
+        }
+      });
+      console.log(flag);
+    })
+    .catch((err) => {
+      console.log(err);
+      return res.status(400).send({
+        status: "error",
+        msg: "error finding available slots for booking",
+      });
+    });
 
-  if(flag == true){
+  if (flag == true) {
     await bookings
       .update(slot, {
         where: {
@@ -171,7 +209,7 @@ bookingRouter.post("/bookslot", authRole(["user"]), async (req, res) => {
         booked_date,
         slot: Object.keys(slot)[0],
         type,
-        fees
+        fees,
       })
       .then((data) => {
         // console.log(data);
@@ -186,9 +224,8 @@ bookingRouter.post("/bookslot", authRole(["user"]), async (req, res) => {
           .send({ status: "error", msg: "error booking appointment" });
       });
   } else {
-    res.send({status : 'fail', msg : 'selected slot is already booked'})
+    res.send({ status: "fail", msg: "selected slot is already booked" });
   }
-
 });
 
 module.exports = bookingRouter;

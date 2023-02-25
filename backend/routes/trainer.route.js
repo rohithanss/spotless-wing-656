@@ -184,27 +184,39 @@ trainerRouter.delete("/closeslot/:id", async (req, res) => {
     });
 });
 
-trainerRouter.patch('/updatelink',authRole(['trainer']), async (req,res) => {
-  const {id,zoom_link,booking_status,userID} = req.body;
+trainerRouter.patch(
+  "/updateslotdetails",
+  authRole(["trainer"]),
+  async (req, res) => {
+    const { id, zoom_link, booking_status, userID } = req.body;
 
-  await appointments.update({
-    zoom_link,
-    booking_status
-  },
-  {
-    where : {
-      id,
-      trainer_id : userID
-    }
-  })
-  .then(() => {
-    res.status(200).send({status : 'success', msg : 'zoom link and booking status updated successfully'})
-  })
-  .catch((err) => {
-    console.log(err);
-    res.status(400).send({status : 'error', msg : 'error updating zoom link and booking status'})
-  })
-
-})
+    await appointments
+      .update(
+        {
+          zoom_link,
+          booking_status,
+        },
+        {
+          where: {
+            id,
+            trainer_id: userID,
+          },
+        }
+      )
+      .then(() => {
+        res.status(200).send({
+          status: "success",
+          msg: "zoom link and booking status updated successfully",
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(400).send({
+          status: "error",
+          msg: "error updating zoom link and booking status",
+        });
+      });
+  }
+);
 
 module.exports = trainerRouter;
