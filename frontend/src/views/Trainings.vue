@@ -39,12 +39,24 @@
       }"
     >
       <TrainingInfo
-        v-for="{ name, email, activity_type, slots, fee } in data"
+        v-for="{
+          id,
+          trainer_id,
+          name,
+          email,
+          activity_type,
+          slots,
+          fees,
+          reg_date,
+        } in data"
+        :trainer_id="trainer_id"
         :name="name"
         :email="email"
         :activity_type="activity_type"
-        :fee="fee"
+        :fee="fees"
         :slots="slots"
+        :reg_date="reg_date"
+        :key="id"
       />
     </div>
   </div>

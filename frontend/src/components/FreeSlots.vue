@@ -126,16 +126,8 @@ function updateSlotData(id, slot) {
     }
   });
 }
+
 function deleteAllSlot(id) {
-  //   confirm.require({
-  //     target: event.currentTarget,
-  //     message: `Are you sure you want to close all slots?`,
-  //     icon: "pi pi-exclamation-triangle",
-  //     accept: () => {
-  //       //callback to execute when user confirms the action
-  //       try {
-  //         closeAllSlots(id).then((res) => {
-  //           if (res.status == "success") {
   let idx;
   data2.value.forEach((el, i) => {
     if (el.id == id) {
@@ -143,14 +135,8 @@ function deleteAllSlot(id) {
     }
   });
   data.value.splice(idx, 1);
-  //           }
-  //         });
-  //       } catch (err) {
-  //         console.log(err);
-  //       }
-  //     },
-  //   });
 }
+
 function slotsObj(data, allSlots) {
   let slotsArr = [];
 

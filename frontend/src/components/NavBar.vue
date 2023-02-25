@@ -1,9 +1,18 @@
 <template>
   <nav>
-    <div>
+    <div :style="{ display: 'flex', alignItems: 'center', gap: '10px' }">
       <RouterLink to="/">
         <img class="logo" src="BrohFitness.png" alt=""
       /></RouterLink>
+      <p
+        :style="{ color: 'var(--text-color)' }"
+        v-if="profile.role == 'trainer'"
+      >
+        For
+        <span :style="{ color: 'var(--primary-color)', fontWeight: '600' }"
+          >Trainers</span
+        >
+      </p>
     </div>
     <div class="navLinks" v-if="profile.status == false">
       <RouterLink to="/">Home</RouterLink>
@@ -66,6 +75,9 @@ nav {
   justify-content: space-between;
   align-items: center;
   background-color: var(--surface-200);
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .logo {

@@ -1,6 +1,7 @@
 <template>
   <div
     :style="{
+      margin: '20px auto',
       width: '70%',
       'box-shadow': 'rgba(0, 0, 0, 0.24) 0px 3px 8px',
       display: 'flex',
@@ -29,16 +30,16 @@
     <div :style="{ width: '50%' }">
       <table>
         <tr>
-          <th>Trainee:</th>
-          <td>{{ traineeName }}</td>
+          <th>Trainer:</th>
+          <td>{{ trainerName }}</td>
         </tr>
         <tr>
           <th>Type:</th>
           <td>{{ activity_type }}</td>
         </tr>
         <tr>
-          <th>Trainee Email:</th>
-          <td>{{ traineeEmail }}</td>
+          <th>Trainer Email:</th>
+          <td>{{ trainerEmail }}</td>
         </tr>
         <tr>
           <th>Fee(per session):</th>
@@ -51,28 +52,7 @@
         <tr>
           <th>Zoom Link:</th>
           <td :style="{ display: 'flex' }">
-            <InputText
-              type="text"
-              v-model="zoomLinkValue"
-              :disabled="editLink"
-            />
-            <i
-              @click="
-                () => {
-                  editLink = !editLink;
-                }
-              "
-              class="pi pi-pencil"
-              :style="{
-                border: '1px solid #c92d2d',
-                borderRadius: '5px',
-                padding: '7px',
-                fontSize: '1.4rem',
-                cursor: 'pointer',
-                marginLeft: '10px',
-                color: '#c92d2d',
-              }"
-            />
+            <InputText type="text" v-model="zoomLinkValue" :disabled="true" />
           </td>
         </tr>
       </table>
@@ -89,8 +69,14 @@
       <Button
         class="p-button-info"
         :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
+        @click="
+          () => {
+            openZoomLink();
+          }
+        "
+        :disabled="status == 'completed'"
       >
-        Update Link
+        {{ status == "pending" ? "Join Meet" : "Completed" }}
       </Button>
     </div>
   </div>
@@ -100,19 +86,22 @@
 import { ref, computed } from "vue";
 
 const props = defineProps([
-  "traineeName",
-  "traineeEmail",
-  "traineeId",
+  "trainerName",
+  "trainerEmail",
+  "trainerId",
   "activity_type",
   "fee",
-  "email",
   "slot",
   "reg_date",
   "zoomLink",
+  "status",
 ]);
 
 const zoomLinkValue = ref(props.zoomLink);
-const editLink = ref(true);
+
+function openZoomLink() {
+  window.open(props.zoomLink, "_blank");
+}
 
 const backgroundColor =
   props.activity_type == "Gym"

@@ -174,66 +174,121 @@ async function getAllTrainings(reg_date, type, sort) {
   return {
     data: [
       {
-        id: 1,
+        id: 5,
+        trainer_id: 5,
         name: "Rohit",
         email: "rhans@icloud.com",
         activity_type: "Yoga",
-        fee: 1000,
+        fees: 1000,
         six: true,
         seven: true,
         six_eve: true,
+        reg_date: "2023-02-28",
       },
       {
-        id: 1,
+        id: 3,
+        trainer_id: 3,
         name: "Rohit",
         email: "rhans@icloud.com",
         activity_type: "Fat Loss",
-        fee: 1000,
+        fees: 1000,
         six: true,
         seven: true,
         six_eve: true,
+        reg_date: "2023-02-26",
       },
       {
-        id: 1,
+        id: 5,
+        trainer_id: 5,
         name: "Brijesh",
         email: "brijesh@icloud.com",
         activity_type: "Gym",
-        fee: 1500,
+        fees: 1500,
 
         ten: true,
         eleven: true,
         four: true,
         five: true,
+        reg_date: "2023-03-02",
       },
       {
-        id: 1,
+        id: 6,
+        trainer_id: 6,
+
         name: "Brijesh",
         email: "brijesh@icloud.com",
         activity_type: "Diet",
-        fee: 500,
+        fees: 500,
 
         eight: true,
         twelve: true,
         three: true,
         seven_eve: true,
+        reg_date: "2023-03-04",
       },
       {
-        id: 1,
+        id: 3,
+        trainer_id: 3,
         name: "Brijesh",
         email: "brijesh@icloud.com",
         activity_type: "Weight Gain",
-        fee: 500,
+        fees: 500,
 
         eight: true,
         twelve: true,
         three: true,
         seven_eve: true,
+        reg_date: "2023-02-28",
       },
     ],
   };
 }
 
-async function bookTraining() {}
+async function bookTraining(trainer_id, booked_date, slot, type, fees) {
+  let token = localStorage.getItem("token");
+  try {
+    let res = await axios.post(
+      `${url}/booking/bookslot`,
+      {
+        trainer_id,
+        booked_date,
+        slot,
+        type,
+        fees,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    res = await res.data;
+
+    return res;
+  } catch (err) {
+    return { status: "error", msg: "error while booking training slot" };
+  }
+}
+
+async function getMyBookings(reg_date, activity_type) {
+  let token = localStorage.getItem("token");
+  try {
+    let res = await axios.get(
+      `${url}/booking/user?selected_date=${reg_date}&type=${activity_type}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return await res.data;
+  } catch (err) {
+    return {
+      status: "error",
+      msg: "something went wrong while fetching my bookings",
+    };
+  }
+}
 export {
   isLoggedIn,
   logout,
@@ -245,4 +300,5 @@ export {
   closeAllSlots,
   getAllTrainings,
   bookTraining,
+  getMyBookings,
 };
