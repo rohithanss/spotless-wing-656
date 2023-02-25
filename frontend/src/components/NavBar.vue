@@ -2,7 +2,7 @@
   <nav>
     <div :style="{ display: 'flex', alignItems: 'center', gap: '10px' }">
       <RouterLink to="/">
-        <img class="logo" src="BrohFitness.png" alt=""
+        <img class="logo" src="logo.png" alt=""
       /></RouterLink>
       <p
         :style="{ color: 'var(--text-color)' }"

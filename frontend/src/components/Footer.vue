@@ -2,7 +2,7 @@
   <footer>
     <div>
       <img
-        src="BrohFitness.png"
+        src="logo.png"
         :style="{ height: '50px', marginBottom: '10px' }"
         alt=""
       />
