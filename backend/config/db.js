@@ -1,8 +1,8 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
-const sequelize = new Sequelize('fitness', 'root', process.env.SQLKEY, {
-    host : 'localhost',
+const sequelize = new Sequelize('sql12601054', 'sql12601054', process.env.SQLKEY, {
+    host: 'sql12.freesqldatabase.com',
     dialect : 'mysql'
 });
 
