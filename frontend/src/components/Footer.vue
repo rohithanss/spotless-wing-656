@@ -2,7 +2,7 @@
   <footer>
     <div>
       <img
-        src="logo.png"
+        src="images/abc.png"
         :style="{ height: '50px', marginBottom: '10px' }"
         alt=""
       />
