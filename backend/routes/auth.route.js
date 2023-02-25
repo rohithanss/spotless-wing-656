@@ -16,7 +16,7 @@ authRouter.post("/signup", async (req, res) => {
 
   const user = await users.findOne({ where: { email } });
   if(user){
-    return res.status(400).send({status : 'fail', msg : 'User already registered'});
+    return res.send({status : 'fail', msg : 'User already registered'});
   }
 
   bcrypt.hash(password, 4, async (err, hash) => {
@@ -32,7 +32,7 @@ authRouter.post("/signup", async (req, res) => {
         .catch((err) => {
           console.error("Failed to signup :", err);
           if(err.errors != undefined){
-            res.status(400).send({ status : 'fail' ,msg: err.errors[0].message});
+            res.send({ status : 'fail' ,msg: err.errors[0].message});
           } else{
             res.status(400).send({ status : 'error' ,msg : 'something went wrong, please signup again'})
           }
@@ -68,11 +68,11 @@ authRouter.post("/login", async (req, res) => {
           }
         );
       } else {
-        res.status(401).send({ status : 'fail', msg: "Wrong Credentials, try again" });
+        res.send({ status : 'fail', msg: "Wrong Credentials, try again" });
       }
     });
   } else {
-    res.status(404).send({ status : 'fail', msg: "User not found, Please signup" });
+    res.send({ status : 'fail', msg: "User not found, Please signup" });
   }
 });
 

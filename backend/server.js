@@ -20,7 +20,7 @@ app.get('/', (req,res) => {
 app.use('/auth', authRouter);
 app.use('/trainer', authRole(['trainer', 'admin']),trainerRouter);
 app.use('/booking',bookingRouter);
-app.use('user', authRole(['user','admin']), userRouter);
+app.use('/user', authRole(['user','admin']), userRouter);
 
 app.listen(8000, () => {
     console.log('Server started at PORT 8000');
