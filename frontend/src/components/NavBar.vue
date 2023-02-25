@@ -2,11 +2,10 @@
   <nav>
     <div :style="{ display: 'flex', alignItems: 'center', gap: '10px' }">
       <RouterLink to="/">
-        <!-- <img class="logo" src="./images/abc.png" alt=""
-      /> -->
-        <h2 style="color: var(--text-color)">
+        <img class="logo" src="https://i.ibb.co/6gLbFtz/abc.png" alt="" />
+        <!-- <h2 style="color: var(--text-color)">
           <span style="color: var(--primary-color)">Broh</span> Fitness
-        </h2>
+        </h2> -->
       </RouterLink>
       <p
         :style="{ color: 'var(--text-color)' }"

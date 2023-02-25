@@ -1,14 +1,14 @@
 <template>
   <footer>
     <div>
-      <!-- <img
-        src="./images/abc.png"
+      <img
+        src="https://i.ibb.co/6gLbFtz/abc.png"
         :style="{ height: '50px', marginBottom: '10px' }"
         alt=""
-      /> -->
-      <h1 style="color: var(--text-color)">
+      />
+      <!-- <h1 style="color: var(--text-color)">
         <span style="color: var(--primary-color)">Broh</span> Fitness
-      </h1>
+      </h1> -->
     </div>
     <div class="footer-main">
       <div>
