@@ -35,6 +35,7 @@ async function doSignup(isValid) {
   submitted.value = true;
 
   if (isValid) {
+    isLoading.value = true;
     try {
       let res = await signup(
         name.value,
@@ -65,7 +66,7 @@ async function doSignup(isValid) {
         });
       } else {
         toast.add({
-          severity: "warning",
+          severity: "warn",
           summary: "Signup Failed",
           detail: "Something went wrong while creating account",
           life: 3000,
@@ -73,11 +74,13 @@ async function doSignup(isValid) {
       }
     } catch (err) {
       toast.add({
-        severity: "warning",
+        severity: "warn",
         summary: "Signup Failed",
         detail: "Something went wrong while creating account",
         life: 3000,
       });
+    } finally {
+      isLoading.value = false;
     }
   }
 }
@@ -85,7 +88,14 @@ async function doSignup(isValid) {
 <template>
   <div id="container">
     <h1>Join Broh Fitness</h1>
-    <form class="login-form" @submit.prevent="doSignup(!v$.$invalid)">
+    <form
+      class="login-form"
+      @submit.prevent="
+        () => {
+          doSignup(!v$.$invalid);
+        }
+      "
+    >
       <InputText
         name=""
         id=""

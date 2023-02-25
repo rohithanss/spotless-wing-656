@@ -74,6 +74,8 @@
           width: '80%',
           justifyContent: 'center',
         }"
+        :loading="isLoading"
+        :disabled="isLoading || slot == null"
         @click="
           () => {
             bookSlot();
@@ -88,6 +90,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useToast } from "primevue/usetoast";
 
 import { bookTraining } from "../scripts/api.js";
 
@@ -95,21 +98,63 @@ const emits = defineEmits(["updateTraining"]);
 
 const props = defineProps([
   "id",
+  "trainer_id",
   "name",
   "activity_type",
   "fee",
   "email",
   "slots",
+  "reg_date",
 ]);
+const toast = useToast();
+
+const isLoading = ref(false);
 
 const selectedSlot = ref({ value: null, time: "Select Slot" });
 
 const slot = computed(() => selectedSlot.value.value);
 
 async function bookSlot() {
+  isLoading.value = true;
   try {
-    let res = await bookTraining(props.id);
-  } catch (err) {}
+    let res = await bookTraining(
+      props.trainer_id,
+      props.reg_date,
+      { slot: false },
+      props.activity_type,
+      props.fee
+    );
+
+    if (res.status == "success") {
+      toast.add({
+        severity: "success",
+        summary: "Slot Booked",
+        detail: "Your slot booked successfully",
+        life: 3000,
+      });
+
+      setTimeout(() => {
+        window.location = "/mybookings";
+      }, 2500);
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Slot not booked",
+        detail: "Something went wrong, refresh and try again",
+        life: 3000,
+      });
+    }
+  } catch (err) {
+    toast.add({
+      severity: "error",
+      summary: "Slot not booked",
+      detail: "Something went wrong, refresh and try again",
+      life: 3000,
+    });
+  } finally {
+    isLoading.value = false;
+    selectedSlot.value = { value: null, time: "Select Slot" };
+  }
 }
 
 const backgroundColor =

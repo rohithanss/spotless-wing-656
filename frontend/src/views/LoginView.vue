@@ -24,6 +24,7 @@ const v$ = useVuelidate(rules, { password, email1 });
 async function doLogin(isValid) {
   submitted.value = true;
   if (isValid) {
+    isLoading.value = true;
     try {
       let res = await login(email1.value, password.value);
 
@@ -46,7 +47,7 @@ async function doLogin(isValid) {
         });
       } else {
         toast.add({
-          severity: "warning",
+          severity: "warn",
           summary: "Something went wrong while logging in",
           detail: "Message Content",
           life: 3000,
@@ -54,11 +55,13 @@ async function doLogin(isValid) {
       }
     } catch (err) {
       toast.add({
-        severity: "warning",
+        severity: "warn",
         summary: "Something went wrong while logging in",
         detail: "Message Content",
         life: 3000,
       });
+    } finally {
+      isLoading.value = false;
     }
   } else {
     toast.add({
@@ -73,7 +76,14 @@ async function doLogin(isValid) {
 <template>
   <div id="container">
     <h1>Login at Broh</h1>
-    <form class="login-form" @submit.prevent="doLogin(!v$.$invalid)">
+    <form
+      class="login-form"
+      @submit.prevent="
+        () => {
+          doLogin(!v$.$invalid);
+        }
+      "
+    >
       <InputText
         type="email"
         name=""
@@ -99,7 +109,7 @@ async function doLogin(isValid) {
         type="submit"
         label="Log in"
         :loading="isLoading"
-        :disabled="v$.$invalid"
+        :disabled="v$.$invalid || isLoading"
       />
     </form>
     <RouterLink to="/signup">
