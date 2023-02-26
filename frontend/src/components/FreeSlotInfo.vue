@@ -81,9 +81,8 @@
         :style="{ fontWeight: '600', width: '90%', justifyContent: 'center' }"
         :disabled="slot == null || isLoading"
         :loading="isLoading"
-      >
-        Reserve Selected Slot</Button
-      >
+        label="Reserve Selected Slot"
+      />
     </div>
   </div>
   <ConfirmPopup></ConfirmPopup>

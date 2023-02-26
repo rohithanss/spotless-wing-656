@@ -59,7 +59,7 @@ async function doSignup(isValid) {
         }, 3000);
       } else if (res.status == "fail") {
         toast.add({
-          severity: "error ",
+          severity: "error",
           summary: "User already exists",
           detail: "Try logging in",
           life: 3000,

@@ -75,8 +75,10 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import { useToast } from "primevue/usetoast";
 
 import { createSlots } from "../scripts/api.js";
+const toast = useToast();
 
 const props = defineProps(["profile"]);
 
@@ -134,8 +136,30 @@ async function openSlots() {
         selectedSlots.value
       );
 
-      console.log(res);
+      if (res.status == "success") {
+        toast.add({
+          severity: "success",
+          summary: "Slots Created",
+          detail: "Slots are opened successfully, go to Slot status to check",
+          life: 3000,
+        });
+
+        resetForm();
+      } else {
+        toast.add({
+          severity: "warn",
+          summary: "Slot not created",
+          detail: "Something went wrong while opening slots",
+          life: 3000,
+        });
+      }
     } catch (err) {
+      toast.add({
+        severity: "warn",
+        summary: "Slot not created",
+        detail: "Something went wrong while opening slots",
+        life: 3000,
+      });
       console.log(err);
     } finally {
       isLoading.value = false;

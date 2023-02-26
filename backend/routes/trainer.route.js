@@ -190,8 +190,12 @@ trainerRouter.delete("/closeslot/:id", async (req, res) => {
     });
 });
 
-trainerRouter.patch('/updatelink',authRole(['trainer']), async (req,res) => {
-  const {id,zoom_link,booking_status,userID} = req.body;
+trainerRouter.patch(
+  "/updateslotdetails",
+  authRole(["trainer"]),
+  async (req, res) => {
+    const { id, zoom_link, booking_status, userID } = req.body;
+
 
   await appointments.update({
     zoom_link,
@@ -236,5 +240,6 @@ trainerRouter.patch('/updatelink',authRole(['trainer']), async (req,res) => {
   })
 
 })
+
 
 module.exports = trainerRouter;

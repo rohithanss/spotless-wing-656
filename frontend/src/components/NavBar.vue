@@ -2,8 +2,11 @@
   <nav>
     <div :style="{ display: 'flex', alignItems: 'center', gap: '10px' }">
       <RouterLink to="/">
-        <img class="logo" src="BrohFitness.png" alt=""
-      /></RouterLink>
+        <img class="logo" src="https://i.ibb.co/6gLbFtz/abc.png" alt="" />
+        <!-- <h2 style="color: var(--text-color)">
+          <span style="color: var(--primary-color)">Broh</span> Fitness
+        </h2> -->
+      </RouterLink>
       <p
         :style="{ color: 'var(--text-color)' }"
         v-if="profile.role == 'trainer'"

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8000";
+const url = "https://brohfitness.onrender.com";
 
 async function signup(name, email, phone, password, role) {
   try {
@@ -125,13 +125,53 @@ async function getFreeSlots(reg_date, activity_type) {
     return {
       status: "error",
       msg: "something went wrong while fetching empty slots",
+      data: [],
     };
   }
 }
 
-async function getBookedSlots() {}
+async function getBookedSlots(reg_date, activity_type) {
+  let token = localStorage.getItem("token");
+  try {
+    let res = await axios.get(
+      `${url}/booking/trainer?selected_date=${reg_date}&type=${activity_type}`,
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return await res.data;
+  } catch (err) {
+    return {
+      status: "error",
+      msg: "something went wrong while fetching booked slots",
+      data: [],
+    };
+  }
+}
 
-async function updatedBookedSlots() {}
+async function updatedBookedSlots(id, zoom_link, booking_status) {
+  let token = localStorage.getItem("token");
+  try {
+    let res = await axios.patch(
+      `${url}/trainer/updateslotdetails`,
+      {
+        id,
+        zoom_link,
+        booking_status,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return await res.data;
+  } catch (err) {
+    return { status: "error", msg: "error while updating slot details" };
+  }
+}
 
 async function reserveSlot(id, slots) {
   let token = localStorage.getItem("token");
@@ -170,78 +210,25 @@ async function closeAllSlots(id) {
 }
 
 async function getAllTrainings(reg_date, type, sort) {
-  console.log(reg_date, type, sort);
-  return {
-    data: [
+  let token = localStorage.getItem("token");
+  try {
+    let res = await axios.get(
+      `${url}/user/availableslots?selected_date=${reg_date}&type=${type}`,
       {
-        id: 5,
-        trainer_id: 5,
-        name: "Rohit",
-        email: "rhans@icloud.com",
-        activity_type: "Yoga",
-        fees: 1000,
-        six: true,
-        seven: true,
-        six_eve: true,
-        reg_date: "2023-02-28",
-      },
-      {
-        id: 3,
-        trainer_id: 3,
-        name: "Rohit",
-        email: "rhans@icloud.com",
-        activity_type: "Fat Loss",
-        fees: 1000,
-        six: true,
-        seven: true,
-        six_eve: true,
-        reg_date: "2023-02-26",
-      },
-      {
-        id: 5,
-        trainer_id: 5,
-        name: "Brijesh",
-        email: "brijesh@icloud.com",
-        activity_type: "Gym",
-        fees: 1500,
-
-        ten: true,
-        eleven: true,
-        four: true,
-        five: true,
-        reg_date: "2023-03-02",
-      },
-      {
-        id: 6,
-        trainer_id: 6,
-
-        name: "Brijesh",
-        email: "brijesh@icloud.com",
-        activity_type: "Diet",
-        fees: 500,
-
-        eight: true,
-        twelve: true,
-        three: true,
-        seven_eve: true,
-        reg_date: "2023-03-04",
-      },
-      {
-        id: 3,
-        trainer_id: 3,
-        name: "Brijesh",
-        email: "brijesh@icloud.com",
-        activity_type: "Weight Gain",
-        fees: 500,
-
-        eight: true,
-        twelve: true,
-        three: true,
-        seven_eve: true,
-        reg_date: "2023-02-28",
-      },
-    ],
-  };
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return await res.data;
+  } catch (err) {
+    console.log(err);
+    return {
+      status: "error",
+      msg: "something went wrong while fetching slots",
+      data: [],
+    };
+  }
 }
 
 async function bookTraining(trainer_id, booked_date, slot, type, fees) {
@@ -298,6 +285,8 @@ export {
   getFreeSlots,
   reserveSlot,
   closeAllSlots,
+  getBookedSlots,
+  updatedBookedSlots,
   getAllTrainings,
   bookTraining,
   getMyBookings,
