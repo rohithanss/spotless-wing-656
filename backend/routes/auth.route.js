@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const users = require('../models/user.model');
 const authRole = require('../middlewares/authRole');
+const sendMail = require('../services/sendMail');
 // const authenticate = require('../middlewares/authenticate');
 
 const authRouter = express.Router();
@@ -63,6 +64,7 @@ authRouter.post("/login", async (req, res) => {
                 .status(400)
                 .send({status : 'error', msg: "Something went wrong, Please login again" });
             } else {
+              // sendMail('bmsavaliya001@gmail.com', 'testing mail', 'tested content')
               res.status(202).send({status : 'success', msg: "Login Successful", token: token });
             }
           }

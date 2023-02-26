@@ -1,9 +1,15 @@
 const express = require("express");
 const { Op } = require("sequelize");
-const authRole = require("../middlewares/authRole");
-const appointments = require("../models/appointment.model");
 
+const authRole = require("../middlewares/authRole");
+const users = require('../models/user.model');
+const appointments = require("../models/appointment.model");
 const bookings = require("../models/booking.model");
+const sendMail = require("../services/sendMail");
+const { bookingConfirmation } = require("../services/bookingTemp");
+
+users.hasMany(appointments, { foreignKey: 'customer_id'});
+appointments.belongsTo(users, { foreignKey: 'customer_id'});
 
 const trainerRouter = express.Router();
 
@@ -190,33 +196,50 @@ trainerRouter.patch(
   async (req, res) => {
     const { id, zoom_link, booking_status, userID } = req.body;
 
-    await appointments
-      .update(
-        {
-          zoom_link,
-          booking_status,
+
+  await appointments.update({
+    zoom_link,
+    booking_status
+  },
+  {
+    where : {
+      id,
+      trainer_id : userID
+    }
+  })
+  .then( async () => {
+    if(zoom_link != 'To be updated'){
+      await appointments.findAll({
+        where : {
+          id
         },
-        {
-          where: {
-            id,
-            trainer_id: userID,
-          },
-        }
-      )
-      .then(() => {
-        res.status(200).send({
-          status: "success",
-          msg: "zoom link and booking status updated successfully",
-        });
+        include : [{
+          model : users,
+          attributes : ['email','name']
+        }]
+      })
+      .then((data) => {
+        const {slot,booked_date,type} = data[0];
+        // console.log(data[0].user);
+        const {name,email} = data[0].user;
+        console.log(email,name);
+        let template = bookingConfirmation(name,slot,booked_date,type,zoom_link)
+
+        sendMail(email,"Slot booking confirmation",template);
+        
       })
       .catch((err) => {
         console.log(err);
-        res.status(400).send({
-          status: "error",
-          msg: "error updating zoom link and booking status",
-        });
-      });
-  }
-);
+      })
+    }
+    res.status(200).send({status : 'success', msg : 'zoom link and booking status updated successfully'})
+  })
+  .catch((err) => {
+    console.log(err);
+    res.status(400).send({status : 'error', msg : 'error updating zoom link and booking status'})
+  })
+
+})
+
 
 module.exports = trainerRouter;

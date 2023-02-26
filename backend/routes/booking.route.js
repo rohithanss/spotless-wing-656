@@ -6,6 +6,7 @@ const users = require("../models/user.model");
 const appointments = require("../models/appointment.model");
 const bookings = require("../models/booking.model");
 const authRole = require("../middlewares/authRole");
+const {bookingConfirmation} = require("../services/bookingTemp");
 
 const bookingRouter = express.Router();
 
