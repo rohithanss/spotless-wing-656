@@ -1,9 +1,15 @@
 const express = require("express");
 const { Op } = require("sequelize");
-const authRole = require("../middlewares/authRole");
-const appointments = require("../models/appointment.model");
 
+const authRole = require("../middlewares/authRole");
+const users = require('../models/user.model');
+const appointments = require("../models/appointment.model");
 const bookings = require("../models/booking.model");
+const sendMail = require("../services/sendMail");
+const { bookingConfirmation } = require("../services/bookingTemp");
+
+users.hasMany(appointments, { foreignKey: 'customer_id'});
+appointments.belongsTo(users, { foreignKey: 'customer_id'});
 
 const trainerRouter = express.Router();
 
@@ -197,7 +203,31 @@ trainerRouter.patch('/updatelink',authRole(['trainer']), async (req,res) => {
       trainer_id : userID
     }
   })
-  .then(() => {
+  .then( async () => {
+    if(zoom_link != 'To be updated'){
+      await appointments.findAll({
+        where : {
+          id
+        },
+        include : [{
+          model : users,
+          attributes : ['email','name']
+        }]
+      })
+      .then((data) => {
+        const {slot,booked_date,type} = data[0];
+        // console.log(data[0].user);
+        const {name,email} = data[0].user;
+        console.log(email,name);
+        let template = bookingConfirmation(name,slot,booked_date,type,zoom_link)
+
+        sendMail(email,"Slot booking confirmation",template);
+        
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+    }
     res.status(200).send({status : 'success', msg : 'zoom link and booking status updated successfully'})
   })
   .catch((err) => {
