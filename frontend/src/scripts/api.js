@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8000";
+const url = "https://brohfitness.onrender.com";
 
 async function signup(name, email, phone, password, role) {
   try {
