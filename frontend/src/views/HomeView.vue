@@ -2,7 +2,10 @@
   <div>
     <div class="main">
       <h2 id="running-text"></h2>
-      <RouterLink to="/trainings">
+      <RouterLink v-if="profile.role == 'trainer'" to="/signup">
+        <Button :style="{ fontWeight: '600' }">Register Now</Button>
+      </RouterLink>
+      <RouterLink v-else to="/trainings">
         <Button :style="{ fontWeight: '600' }">Book Training</Button>
       </RouterLink>
     </div>
@@ -20,31 +23,33 @@
     </div>
   </div>
 </template>
-<script>
+<script setup>
 import { RouterLink } from "vue-router";
 import Typewriter from "typewriter-effect/dist/core";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import SuccessStories from "../components/SuccessStories.vue";
 import BrohFitness from "../components/BrohFitness.vue";
 import Offers from "../components/Offers.vue";
 import ImageGallery from "../components/ImageGallery.vue";
-export default {
-  setup() {
-    const hostname = ref("");
-    return { hostname };
-  },
-  mounted() {
-    new Typewriter("#running-text", {
-      strings: [
-        "Want to Be the better version of yourself?",
-        "Want to be physically fit? Book Training Today...",
-      ],
-      loop: true,
-      autoStart: true,
-    });
-  },
-  components: { BrohFitness, SuccessStories, Offers, ImageGallery },
-};
+
+const props = defineProps(["profile"]);
+
+onMounted(() => {
+  new Typewriter("#running-text", {
+    strings:
+      props.profile.role == "trainer"
+        ? [
+            "Want to earn by training others from Home?",
+            "Become Trainer today with us at no cost",
+          ]
+        : [
+            "Want to Be the better version of yourself?",
+            "Want to be physically fit? Book Training Today...",
+          ],
+    loop: true,
+    autoStart: true,
+  });
+});
 </script>
 <style scoped>
 .main {

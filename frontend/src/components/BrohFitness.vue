@@ -16,12 +16,6 @@
         Trained 1000+ People online and offline Since 2017
       </p>
     </div>
-    <!-- <div class="image">
-      <img
-        src="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg"
-        alt=""
-      />
-    </div> -->
   </div>
 </template>
 
