@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const url = "https://brohfitness.onrender.com";
+// const url = "http://localhost:8000";
 
 async function signup(name, email, phone, password, role) {
   try {
@@ -276,6 +277,7 @@ async function getMyBookings(reg_date, activity_type) {
     };
   }
 }
+
 export {
   isLoggedIn,
   logout,

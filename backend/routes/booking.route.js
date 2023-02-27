@@ -6,14 +6,16 @@ const users = require("../models/user.model");
 const appointments = require("../models/appointment.model");
 const bookings = require("../models/booking.model");
 const authRole = require("../middlewares/authRole");
-const {bookingConfirmation} = require("../services/bookingTemp");
+const { bookingConfirmation } = require("../services/bookingTemp");
 
 const bookingRouter = express.Router();
 
-users.hasMany(appointments, { foreignKey: "customer_id" });
-appointments.belongsTo(users, { foreignKey: "customer_id" });
+users.hasMany(appointments, { foreignKey: "trainer_id" });
+appointments.belongsTo(users, { foreignKey: "trainer_id" });
 
 bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
+  users.hasMany(appointments, { foreignKey: "customer_id" });
+  appointments.belongsTo(users, { foreignKey: "customer_id" });
   const { userID } = req.body;
   const date = new Date();
   const curr_date = date.toISOString().split("T")[0];
@@ -84,6 +86,8 @@ bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
 
 // See booked Slots
 bookingRouter.get("/user", authRole(["user"]), async (req, res) => {
+  users.hasMany(appointments, { foreignKey: "trainer_id" });
+  appointments.belongsTo(users, { foreignKey: "trainer_id" });
   const { userID } = req.body;
   const date = new Date();
   const curr_date = date.toISOString().split("T")[0];
