@@ -126,7 +126,7 @@ const allSlots = {
   six: "06:00 AM",
   seven: "07:00 AM",
   eight: "08:00 AM",
-  nine: "06:00 AM",
+  nine: "09:00 AM",
   ten: "10:00 AM",
   eleven: "11:00 AM",
   twelve: "12:00 PM",
