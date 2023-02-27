@@ -10,9 +10,6 @@ const { bookingConfirmation } = require("../services/bookingTemp");
 
 const bookingRouter = express.Router();
 
-users.hasMany(appointments, { foreignKey: "trainer_id" });
-appointments.belongsTo(users, { foreignKey: "trainer_id" });
-
 bookingRouter.get("/trainer", authRole(["trainer"]), async (req, res) => {
   users.hasMany(appointments, { foreignKey: "customer_id" });
   appointments.belongsTo(users, { foreignKey: "customer_id" });
