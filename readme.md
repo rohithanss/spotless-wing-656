@@ -29,9 +29,22 @@ Welcome to Broh Fitness. Broh Fitness is fitness trainings booking application b
     "validator": "^13.9.0"
 ```
 
-## Home Page :
+### Home Page :
 
-<img src="https://i.ibb.co/qshqsfM/Broh-Fitness-Home-Page.png"/>
+<img src="https://i.ibb.co/hYHQPr7/Broh-Fitness-Home-Page.png"/>
 
-Here on Home page we have some basic info and templates for site. We have navbar at top of page, As we can see in navbar we have options for Create Acoount and Login. To access Live trainings and other features user or trainer have to login first.
+- Here on Home page we have some basic info and templates for site. We have navbar at top of page, As we can see in navbar we have options for Create Acoount and Login. To access Live trainings and other features user or trainer have to login first.
 
+Then, we will see signup and login page :
+
+### SignUp Page :
+
+<img src="https://i.ibb.co/rs9Y8V5/Broh-signup.png">
+
+- From this trainer or user can signup with name,email,mobile number and password. For trainer he/she have to check the box for register as trainer.
+
+### LogIn Page :
+
+<img src="https://i.ibb.co/YTSBfpk/Broh-Login.png">
+
+- From this page trainer or user can login to site with proper credentials provided at the time of signup.
