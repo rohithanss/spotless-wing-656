@@ -67,7 +67,7 @@ We have applied role based access control. So, we have different features for tr
 - At bottom, In booked slots section, trainer can see the bookings done by customers for his created slots. Here he/she can change the slot status and also can provide links in case of virtual sessions.
 - In both the sections, we have filter functionality by dates and training types.
 
-## 1. User :
+## 2. User :
 
 - ### Live Trainings :
 
@@ -82,3 +82,5 @@ We have applied role based access control. So, we have different features for tr
 
 - On this page users can see all the trainig sessions booked by them. Also they can see the slot status and other required information for booked slots.
 - Also, Users can filter their booked slots by dates and tarining types.
+
+So, this details concludes our project and features of project.
