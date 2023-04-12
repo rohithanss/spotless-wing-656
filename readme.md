@@ -48,3 +48,37 @@ Then, we will see signup and login page :
 <img src="https://i.ibb.co/YTSBfpk/Broh-Login.png">
 
 - From this page trainer or user can login to site with proper credentials provided at the time of signup.
+
+We have applied role based access control. So, we have different features for trainers and users. Now, we will see these different functionalities of triners and users.
+
+## 1. Trainer :
+
+- ### Create Slots :
+
+<img src="https://i.ibb.co/sWMMgxn/Broh-Trainer-create-slot.png">
+
+- From tis page trainer can release or create slots after selecting date, category, time slots and fees. Trainer can not release slots for previous dates.
+
+- ### Slot Status :
+
+<img src="https://i.ibb.co/wLpLpjv/Broh-Trainer-slot-status.png">
+
+- On this page, trainer can see all available slots released by him/her. He/she can reserver particular slots for particular date or he/she can close all slots for particular dates.
+- At bottom, In booked slots section, trainer can see the bookings done by customers for his created slots. Here he/she can change the slot status and also can provide links in case of virtual sessions.
+- In both the sections, we have filter functionality by dates and training types.
+
+## 1. User :
+
+- ### Live Trainings :
+
+<img src="https://i.ibb.co/CssGpRh/Broh-User-Live-trainings.png">
+
+- From this page, user can see all the available slots by all trainers. Users can book the sessions for suitable training after selecting time slot according to their choice.
+- Also, users can filter the trainings sessions by dates and training types.
+
+- ### My Bookings :
+
+<img src="https://i.ibb.co/586d3RK/Broh-User-Bookings.png">
+
+- On this page users can see all the trainig sessions booked by them. Also they can see the slot status and other required information for booked slots.
+- Also, Users can filter their booked slots by dates and tarining types.
