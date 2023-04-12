@@ -28,3 +28,10 @@ Welcome to Broh Fitness. Broh Fitness is fitness trainings booking application b
     "sequelize": "^6.28.0",
     "validator": "^13.9.0"
 ```
+
+## Home Page :
+
+<img src="https://i.ibb.co/qshqsfM/Broh-Fitness-Home-Page.png"/>
+
+Here on Home page we have some basic info and templates for site. We have navbar at top of page, As we can see in navbar we have options for Create Acoount and Login. To access Live trainings and other features user or trainer have to login first.
+
